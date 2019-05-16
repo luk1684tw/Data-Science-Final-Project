@@ -2,7 +2,7 @@ import torch
 import torchvision
 import os
 from torchvision import transforms
-from  torch.utils.data import WeightedRandomSampler
+from torch.utils.data import WeightedRandomSampler
 
 def GenerateCifar10Dataset(root, batch_size):
     print ('start create datasets')
