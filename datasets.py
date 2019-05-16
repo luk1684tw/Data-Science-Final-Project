@@ -2,7 +2,7 @@ import torch
 import torchvision
 import os
 from torchvision import transforms
-import torch.utils.data.WeightedRandomSampler as WeightedRandomSampler
+from  torch.utils.data import WeightedRandomSampler
 
 def GenerateCifar10Dataset(root, batch_size):
     transform = transforms.Compose([
