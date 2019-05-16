@@ -17,18 +17,5 @@ def GenerateCifar10Dataset(root, batch_size):
 
     trainLoader = torch.utils.data.DataLoader(training, batch_size, shuffle=False, num_workers=2, sampler=sampler)
     testLoader = torch.utils.data.DataLoader(testing, batch_size, shuffle=False, num_workers=2, sampler=sampler)
-    
-    labels = ['plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
-    count = dict()
-    for img, label in trainLoader:
-        if label in count:
-            count[label] += 1
-        else:
-            count[label] = 1
-    
-    trainLen = len(trainLoader)
-    for label in labels:
-        count[label] /= trainLen
-    print (count)
 
     return trainLoader, testLoader
