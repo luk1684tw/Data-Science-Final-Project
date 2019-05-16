@@ -5,6 +5,7 @@ from torchvision import transforms
 from  torch.utils.data import WeightedRandomSampler
 
 def GenerateCifar10Dataset(root, batch_size):
+    print ('start create datasets')
     transform = transforms.Compose([
         transforms.ToTensor(),
         transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
