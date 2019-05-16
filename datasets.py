@@ -15,8 +15,8 @@ def GenerateCifar10Dataset(root, batch_size):
 
     sampler = WeightedRandomSampler([0.9, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1], 10)
 
-    trainLoader = torch.utils.data.DataLoader(training, batch_size, shuffle=True, num_workers=2, sampler=sampler)
-    testLoader = torch.utils.data.DataLoader(testing, batch_size, shuffle=True, num_workers=2, sampler=sampler)
+    trainLoader = torch.utils.data.DataLoader(training, batch_size, shuffle=False, num_workers=2, sampler=sampler)
+    testLoader = torch.utils.data.DataLoader(testing, batch_size, shuffle=False, num_workers=2, sampler=sampler)
     
     labels = ['plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
     count = dict()
