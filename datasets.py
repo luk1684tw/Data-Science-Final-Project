@@ -17,7 +17,7 @@ def GenerateCifar10Dataset(root, batch_size):
     print ('create sampler')
     weights = [0]*len(training.data)
     classRation = [0.3, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
-    for idx, val in enumerate(training.imgs):
+    for idx, val in enumerate(training):
         weights[idx] = classRation[val[1]]
     sampler = WeightedRandomSampler(weights, 50000)
     # print (list(sampler))
