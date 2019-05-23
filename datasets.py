@@ -15,7 +15,7 @@ def GenerateCifar10Dataset(root, batch_size):
     testing = torchvision.datasets.CIFAR10(os.path.join(root, 'datasets/cifar10'), download=True, train=False, transform=transform)
 
     print ('create sampler')
-    sampler = WeightedRandomSampler([0.5, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1], 50000)
+    sampler = WeightedRandomSampler([0.5, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1], 50000)
     print (sampler)
 
     print ('create dataloader')
