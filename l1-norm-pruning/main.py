@@ -63,7 +63,7 @@ if not os.path.exists(args.save):
 kwargs = {'num_workers': 1, 'pin_memory': True} if args.cuda else {}
 
 if args.dataset == 'cifar10':
-    train_loader, test_loader = get(root, args.batch_size)
+    train_loader, test_loader = get(root, args.batch_size, args.test_batch_size)
     # train_loader = torch.utils.data.DataLoader(
     #     datasets.CIFAR10('./data.cifar10', train=True, download=True,
     #                    transform=transforms.Compose([
