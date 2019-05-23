@@ -34,4 +34,3 @@ class VGGNet(nn.Module):
             x = layer(x)
         out = x
         return out
-
