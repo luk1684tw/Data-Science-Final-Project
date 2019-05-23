@@ -15,7 +15,7 @@ def GenerateCifar10Dataset(root, batch_size):
     testing = torchvision.datasets.CIFAR10(os.path.join(root, 'datasets/cifar10'), download=True, train=False, transform=transform)
 
     print ('create sampler')
-    weights = [0]*len(training.imgs)
+    weights = [0]*len(training.data)
     classRation = [0.3, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
     for idx, val in enumerate(training.imgs):
         weights[idx] = classRation[val[1]]
