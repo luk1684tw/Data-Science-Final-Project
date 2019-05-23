@@ -7,7 +7,7 @@ from torch.utils.data import WeightedRandomSampler
 
 def GenerateCifar10Dataset(root, batch_size):
     print('start create datasets')
-    transform = transforms.Compose([
+    trainTransform = transforms.Compose([
         transforms.Pad(4),
         transforms.RandomCrop(32),
         transforms.RandomHorizontalFlip(),
@@ -16,10 +16,16 @@ def GenerateCifar10Dataset(root, batch_size):
                              (0.2023, 0.1994, 0.2010))
     ])
 
+    testTransform = transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Normalize((0.4914, 0.4822, 0.4465),
+                             (0.2023, 0.1994, 0.2010))
+    ])
+
     training = torchvision.datasets.CIFAR10(os.path.join(
-        root, 'datasets/cifar10'), download=True, train=True, transform=transform)
+        root, 'datasets/cifar10'), download=True, train=True, transform=trainTransform)
     testing = torchvision.datasets.CIFAR10(os.path.join(
-        root, 'datasets/cifar10'), download=True, train=False, transform=transform)
+        root, 'datasets/cifar10'), download=True, train=False, transform=testTransform)
 
     print('create sampler')
     weights = [0]*len(training.data)
