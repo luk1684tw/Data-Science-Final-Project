@@ -143,6 +143,7 @@ def test():
     model.eval()
     test_loss = 0
     correct = 0
+    print ('len of testloader:', len(test_loader.dataset))
     for data, target in test_loader:
         if args.cuda:
             data, target = data.cuda(), target.cuda()
