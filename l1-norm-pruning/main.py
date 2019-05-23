@@ -45,11 +45,12 @@ parser.add_argument('--log-interval', type=int, default=100, metavar='N',
                     help='how many batches to wait before logging training status')
 parser.add_argument('--save', default='../saves', type=str, metavar='PATH',
                     help='path to save prune model (default: current directory)')
-parser.add_argument('--arch', default='vgg', type=str, 
+parser.add_argument('--arch', default='vgg', type=str,
                     help='architecture to use')
 parser.add_argument('--depth', default=16, type=int,
                     help='depth of the neural network')
-
+parser.add_argument('--dist', default=0, type=int,
+                    help='distribution of dataset')
 args = parser.parse_args()
 args.cuda = not args.no_cuda and torch.cuda.is_available()
 
@@ -63,7 +64,7 @@ if not os.path.exists(args.save):
 kwargs = {'num_workers': 1, 'pin_memory': True} if args.cuda else {}
 
 if args.dataset == 'cifar10':
-    train_loader, test_loader = get(root, args.batch_size, args.test_batch_size)
+    train_loader, test_loader = get(root, args.batch_size, args.test_batch_size, args.dist)
     # train_loader = torch.utils.data.DataLoader(
     #     datasets.CIFAR10('./data.cifar10', train=True, download=True,
     #                    transform=transforms.Compose([

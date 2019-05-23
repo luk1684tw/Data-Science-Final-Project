@@ -5,7 +5,8 @@ from torchvision import transforms
 from torch.utils.data import WeightedRandomSampler
 
 
-def GenerateCifar10Dataset(root, trainBatchSize, testBatchSize):
+def GenerateCifar10Dataset(root, trainBatchSize, testBatchSize, dist_index):
+    DIST = [[14.5,  9.5, 9.5, 9.5, 9.5, 9.5, 9.5, 9.5, 9.5, 9.5]]
     print('start create datasets')
     trainTransform = transforms.Compose([
         transforms.Pad(4),
@@ -29,7 +30,7 @@ def GenerateCifar10Dataset(root, trainBatchSize, testBatchSize):
 
     print('create sampler')
     weights = [0]*len(training.data)
-    classRation = [0.3, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
+    classRation = DIST[dist_index]
     for idx, val in enumerate(training):
         weights[idx] = classRation[val[1]]
     sampler = WeightedRandomSampler(weights, 50000)
