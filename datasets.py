@@ -39,7 +39,7 @@ def GenerateCifar10Dataset(root, trainBatchSize, testBatchSize):
     trainLoader = torch.utils.data.DataLoader(
         training, trainBatchSize, shuffle=False, num_workers=2, sampler=sampler)
     testLoader = torch.utils.data.DataLoader(
-        testing, testBatchSize, shuffle=False, num_workers=2, sampler=sampler)
+        testing, testBatchSize, shuffle=True, num_workers=2)
 
     print('return loaders')
     return trainLoader, testLoader
