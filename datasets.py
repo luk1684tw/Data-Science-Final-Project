@@ -1,12 +1,20 @@
 import torch
 import torchvision
 import os
+import random
 from torchvision import transforms
 from torch.utils.data import WeightedRandomSampler
 
 
 def GenerateCifar10Dataset(root, trainBatchSize, testBatchSize, dist_index):
-    DIST = [[14.5,  9.5, 9.5, 9.5, 9.5, 9.5, 9.5, 9.5, 9.5, 9.5]]
+    dist = [
+        [3, 3, 3, 3, 1, 1, 1, 1, 1, 1],
+        [5, 5, 5, 5, 1, 1, 1, 1, 1, 1],
+        [3, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [5, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+        [1, 5, 5, 5, 5, 5, 5, 5, 5, 5]
+    ]
     print('start create datasets')
     trainTransform = transforms.Compose([
         transforms.Pad(4),
@@ -30,7 +38,9 @@ def GenerateCifar10Dataset(root, trainBatchSize, testBatchSize, dist_index):
 
     print('create sampler')
     weights = [0]*len(training.data)
-    classRation = DIST[dist_index]
+    classRation = dist[dist_index].copy()
+    random.shuffle(classRation)
+    print ('Label distribution ratio:',classRation)
     for idx, val in enumerate(training):
         weights[idx] = classRation[val[1]]
     sampler = WeightedRandomSampler(weights, 50000)
