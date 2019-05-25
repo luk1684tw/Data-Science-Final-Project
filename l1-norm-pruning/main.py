@@ -101,7 +101,6 @@ kwargs = {'num_workers': 1, 'pin_memory': True} if args.cuda else {}
 #                        ])),
 #         batch_size=args.test_batch_size, shuffle=True, **kwargs)
 
-model = models.__dict__[args.arch](dataset=args.dataset, depth=args.depth)
 
 if args.cuda:
     model.cuda()
@@ -163,12 +162,13 @@ def test():
     return correct / float(len(test_loader.dataset))
 
 def save_checkpoint(state, is_best, filepath, dist):
-    torch.save(state, os.path.join(filepath, f'checkpoint{dist}.pth.tar'))
+    torch.save(state, os.path.join(filepath, f'checkpointDist{dist}.pth.tar'))
     if is_best:
         shutil.copyfile(os.path.join(filepath, 'checkpoint.pth.tar'), os.path.join(filepath, 'model_best.pth.tar'))
 
 for dist in args.dist:
     train_loader, test_loader = get(root, args.batch_size, args.test_batch_size, dist)
+    model = models.__dict__[args.arch](dataset=args.dataset, depth=args.depth)
     best_prec1 = 0.
     for epoch in range(args.start_epoch, args.epochs):
         if epoch in [args.epochs*0.5, args.epochs*0.75]:
