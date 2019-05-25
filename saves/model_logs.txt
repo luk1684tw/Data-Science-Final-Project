@@ -1,1 +1,3 @@
-currently empty, intended to record class data distribution and corresponding model urls in cloud drive
+Dist0: [3, 1, 1, 1, 3, 3, 3, 1, 1, 1], accu: 9299/10000, url: https://drive.google.com/open?id=1ZevQC2T2CsoZvT_H4byGljBoRSq7Dlhw
+Dist1: [1, 1, 5, 1, 1, 1, 5, 5, 1, 5], accu: 9225/10000, url: https://drive.google.com/open?id=1ikYIH_Fin8J6B9Sf2eTjbLcpTdEVA3gW
+Dist2: [1, 3, 1, 1, 1, 1, 1, 1, 1, 1], accu: 9311/10000, url: https://drive.google.com/open?id=1ZnXpbybJ79U3DpATwGpga9A9Qzay7vjh
