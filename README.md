@@ -1,3 +1,10 @@
+# Overview
+Originally from this paper's code implementation - [rethinking-network-pruning](https://github.com/Eric-mingjie/rethinking-network-pruning).
+
+We use the training and pruning settings of this repo.
+
+But modify the dataloader to our umbalanced dataset generator to test whether the conclusion of the paper still holds.
+
 # CIFAR Experiments
 This directory contains all the CIFAR experiments in the paper, where there are four pruning methods in total:  
 
