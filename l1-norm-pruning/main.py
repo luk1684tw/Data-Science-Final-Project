@@ -102,21 +102,6 @@ kwargs = {'num_workers': 1, 'pin_memory': True} if args.cuda else {}
 #         batch_size=args.test_batch_size, shuffle=True, **kwargs)
 
 
-optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay)
-
-if args.resume:
-    if os.path.isfile(args.resume):
-        print("=> loading checkpoint '{}'".format(args.resume))
-        checkpoint = torch.load(args.resume)
-        args.start_epoch = checkpoint['epoch']
-        best_prec1 = checkpoint['best_prec1']
-        model.load_state_dict(checkpoint['state_dict'])
-        optimizer.load_state_dict(checkpoint['optimizer'])
-        print("=> loaded checkpoint '{}' (epoch {}) Prec1: {:f}"
-              .format(args.resume, checkpoint['epoch'], best_prec1))
-    else:
-        print("=> no checkpoint found at '{}'".format(args.resume))
-
 def train(epoch):
     model.train()
     avg_loss = 0.
@@ -166,6 +151,21 @@ def save_checkpoint(state, is_best, filepath, dist):
 for dist in args.dist:
     train_loader, test_loader = get(root, args.batch_size, args.test_batch_size, dist)
     model = models.__dict__[args.arch](dataset=args.dataset, depth=args.depth)
+    optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay)
+
+    if args.resume:
+        if os.path.isfile(args.resume):
+            print("=> loading checkpoint '{}'".format(args.resume))
+            checkpoint = torch.load(args.resume)
+            args.start_epoch = checkpoint['epoch']
+            best_prec1 = checkpoint['best_prec1']
+            model.load_state_dict(checkpoint['state_dict'])
+            optimizer.load_state_dict(checkpoint['optimizer'])
+            print("=> loaded checkpoint '{}' (epoch {}) Prec1: {:f}"
+                .format(args.resume, checkpoint['epoch'], best_prec1))
+    else:
+        print("=> no checkpoint found at '{}'".format(args.resume))
+
     if args.cuda:
         model.cuda()
     best_prec1 = 0.
