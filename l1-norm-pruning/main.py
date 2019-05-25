@@ -65,41 +65,41 @@ if not os.path.exists(args.save):
 
 kwargs = {'num_workers': 1, 'pin_memory': True} if args.cuda else {}
 
-if args.dataset == 'cifar10':
-    train_loader, test_loader = get(root, args.batch_size, args.test_batch_size, args.dist)
-    # train_loader = torch.utils.data.DataLoader(
-    #     datasets.CIFAR10('./data.cifar10', train=True, download=True,
-    #                    transform=transforms.Compose([
-    #                        transforms.Pad(4),
-    #                        transforms.RandomCrop(32),
-    #                        transforms.RandomHorizontalFlip(),
-    #                        transforms.ToTensor(),
-    #                        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
-    #                    ])),
-    #     batch_size=args.batch_size, shuffle=True, **kwargs)
-    # test_loader = torch.utils.data.DataLoader(
-    #     datasets.CIFAR10('./data.cifar10', train=False, transform=transforms.Compose([
-    #                        transforms.ToTensor(),
-    #                        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
-    #                    ])),
-    #     batch_size=args.test_batch_size, shuffle=True, **kwargs)
-else:
-    train_loader = torch.utils.data.DataLoader(
-        datasets.CIFAR100('./data.cifar100', train=True, download=True,
-                       transform=transforms.Compose([
-                           transforms.Pad(4),
-                           transforms.RandomCrop(32),
-                           transforms.RandomHorizontalFlip(),
-                           transforms.ToTensor(),
-                           transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
-                       ])),
-        batch_size=args.batch_size, shuffle=True, **kwargs)
-    test_loader = torch.utils.data.DataLoader(
-        datasets.CIFAR100('./data.cifar100', train=False, transform=transforms.Compose([
-                           transforms.ToTensor(),
-                           transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
-                       ])),
-        batch_size=args.test_batch_size, shuffle=True, **kwargs)
+# if args.dataset == 'cifar10':
+#     train_loader, test_loader = get(root, args.batch_size, args.test_batch_size, args.dist)
+#     # train_loader = torch.utils.data.DataLoader(
+#     #     datasets.CIFAR10('./data.cifar10', train=True, download=True,
+#     #                    transform=transforms.Compose([
+#     #                        transforms.Pad(4),
+#     #                        transforms.RandomCrop(32),
+#     #                        transforms.RandomHorizontalFlip(),
+#     #                        transforms.ToTensor(),
+#     #                        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
+#     #                    ])),
+#     #     batch_size=args.batch_size, shuffle=True, **kwargs)
+#     # test_loader = torch.utils.data.DataLoader(
+#     #     datasets.CIFAR10('./data.cifar10', train=False, transform=transforms.Compose([
+#     #                        transforms.ToTensor(),
+#     #                        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
+#     #                    ])),
+#     #     batch_size=args.test_batch_size, shuffle=True, **kwargs)
+# else:
+#     train_loader = torch.utils.data.DataLoader(
+#         datasets.CIFAR100('./data.cifar100', train=True, download=True,
+#                        transform=transforms.Compose([
+#                            transforms.Pad(4),
+#                            transforms.RandomCrop(32),
+#                            transforms.RandomHorizontalFlip(),
+#                            transforms.ToTensor(),
+#                            transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
+#                        ])),
+#         batch_size=args.batch_size, shuffle=True, **kwargs)
+#     test_loader = torch.utils.data.DataLoader(
+#         datasets.CIFAR100('./data.cifar100', train=False, transform=transforms.Compose([
+#                            transforms.ToTensor(),
+#                            transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
+#                        ])),
+#         batch_size=args.test_batch_size, shuffle=True, **kwargs)
 
 model = models.__dict__[args.arch](dataset=args.dataset, depth=args.depth)
 
@@ -162,24 +162,26 @@ def test():
         100. * correct / len(test_loader.dataset)))
     return correct / float(len(test_loader.dataset))
 
-def save_checkpoint(state, is_best, filepath):
-    torch.save(state, os.path.join(filepath, 'checkpoint.pth.tar'))
+def save_checkpoint(state, is_best, filepath, dist):
+    torch.save(state, os.path.join(filepath, f'checkpoint{dist}.pth.tar'))
     if is_best:
         shutil.copyfile(os.path.join(filepath, 'checkpoint.pth.tar'), os.path.join(filepath, 'model_best.pth.tar'))
 
-best_prec1 = 0.
-for epoch in range(args.start_epoch, args.epochs):
-    if epoch in [args.epochs*0.5, args.epochs*0.75]:
-        for param_group in optimizer.param_groups:
-            param_group['lr'] *= 0.1
-    train(epoch)
-    prec1 = test()
-    is_best = prec1 > best_prec1
-    best_prec1 = max(prec1, best_prec1)
-    save_checkpoint({
-        'epoch': epoch + 1,
-        'state_dict': model.state_dict(),
-        'best_prec1': best_prec1,
-        'optimizer': optimizer.state_dict(),
-        'cfg': model.cfg
-    }, is_best, filepath=args.save)
+for dist in args.dist:
+    train_loader, test_loader = get(root, args.batch_size, args.test_batch_size, dist)
+    best_prec1 = 0.
+    for epoch in range(args.start_epoch, args.epochs):
+        if epoch in [args.epochs*0.5, args.epochs*0.75]:
+            for param_group in optimizer.param_groups:
+                param_group['lr'] *= 0.1
+        train(epoch)
+        prec1 = test()
+        is_best = prec1 > best_prec1
+        best_prec1 = max(prec1, best_prec1)
+        save_checkpoint({
+            'epoch': epoch + 1,
+            'state_dict': model.state_dict(),
+            'best_prec1': best_prec1,
+            'optimizer': optimizer.state_dict(),
+            'cfg': model.cfg
+        }, is_best, filepath=args.save, dist=dist)
