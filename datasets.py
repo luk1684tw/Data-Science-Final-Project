@@ -41,6 +41,7 @@ def GenerateCifar10Dataset(root, trainBatchSize, testBatchSize, dist_index):
     classRation = dist[dist_index].copy()
     random.shuffle(classRation)
     print ('Label distribution ratio:',classRation)
+    
     for idx, val in enumerate(training):
         weights[idx] = classRation[val[1]]
     sampler = WeightedRandomSampler(weights, 50000)

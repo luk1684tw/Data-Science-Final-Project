@@ -49,7 +49,7 @@ parser.add_argument('--arch', default='vgg', type=str,
                     help='architecture to use')
 parser.add_argument('--depth', default=16, type=int,
                     help='depth of the neural network')
-parser.add_argument('--dist', default=0, type=int,
+parser.add_argument('--dist', default=0, type=int, nargs='+',
                     help='distribution of dataset')
 args = parser.parse_args()
 args.cuda = not args.no_cuda and torch.cuda.is_available()
@@ -165,6 +165,7 @@ def save_checkpoint(state, is_best, filepath):
     if is_best:
         shutil.copyfile(os.path.join(filepath, 'checkpoint.pth.tar'), os.path.join(filepath, 'model_best.pth.tar'))
 
+print (args.dist)
 best_prec1 = 0.
 for epoch in range(args.start_epoch, args.epochs):
     if epoch in [args.epochs*0.5, args.epochs*0.75]:
