@@ -171,6 +171,7 @@ for dist in args.dist:
     train_loader, test_loader = get(root, args.batch_size, args.test_batch_size, dist)
     model = models.__dict__[args.arch](dataset=args.dataset, depth=args.depth)
     optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay)
+    model._initialize_weights()
 
     if args.resume:
         if os.path.isfile(args.resume):
