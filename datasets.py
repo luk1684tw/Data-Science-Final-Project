@@ -14,16 +14,11 @@ def GenerateCifar10Dataset(root, trainBatchSize, testBatchSize, dist_index):
         [5, 1, 1, 1, 1, 1, 1, 1, 1, 1],
         [1, 3, 3, 3, 3, 3, 3, 3, 3, 3],
         [1, 5, 5, 5, 5, 5, 5, 5, 5, 5],
-        [10, 10, 10, 10, 1, 1, 1, 1, 1, 1],
-        [15, 15, 15, 15, 1, 1, 1, 1, 1, 1],
-        [20, 20, 20, 20, 1, 1, 1, 1, 1, 1],
-        [10, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [15, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [20, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [30, 30, 30, 30, 1, 1, 1, 1, 1, 1],
-        [30, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [50, 50, 50, 50, 1, 1, 1, 1, 1, 1],
-        [50, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        [100, 100, 100, 100, 1, 1, 1, 1, 1, 1],
+        [100, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [75, 75, 75, 75, 1, 1, 1, 1, 1, 1],
+        [75, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+
     ]
     print('start create datasets')
     trainTransform = transforms.Compose([
@@ -51,7 +46,7 @@ def GenerateCifar10Dataset(root, trainBatchSize, testBatchSize, dist_index):
     classRation = dist[dist_index].copy()
     random.shuffle(classRation)
     print ('Label distribution ratio:',classRation)
-    
+
     for idx, val in enumerate(training):
         weights[idx] = classRation[val[1]]
     sampler = WeightedRandomSampler(weights, 50000)

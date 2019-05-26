@@ -11,7 +11,6 @@ import torch.optim as optim
 from torchvision import datasets, transforms
 from torch.autograd import Variable
 from sklearn.metrics import f1_score
-
 import models
 import sys
 sys.path.insert(0, '..')
@@ -102,6 +101,15 @@ kwargs = {'num_workers': 1, 'pin_memory': True} if args.cuda else {}
 #                        ])),
 #         batch_size=args.test_batch_size, shuffle=True, **kwargs)
 
+def confusion(prediction, truth):
+    confusion_vector = prediction / truth
+
+    true_positives = torch.sum(confusion_vector == 1).item()
+    false_positives = torch.sum(confusion_vector == float('inf')).item()
+    true_negatives = torch.sum(torch.isnan(confusion_vector)).item()
+    false_negatives = torch.sum(confusion_vector == 0).item()
+
+    return true_positives, false_positives, true_negatives, false_negatives
 
 def train(epoch):
     model.train()
@@ -128,41 +136,31 @@ def test():
     model.eval()
     test_loss = 0
     correct = 0
-    #predict = []
-    #true_value = []
-    classnum = 10
-    target_num = torch.zeros((1,classnum))
-    predict_num = torch.zeros((1,classnum))
-    acc_num = torch.zeros((1,classnum))
+    predict = []
+    true_value = []
 
-    with torch.no_grad():
-        for data, target in test_loader:
-            if args.cuda:
-                data, target = data.cuda(), target.cuda()
-            data, target = Variable(data), Variable(target)
-            output = model(data)
-            test_loss += F.cross_entropy(output, target, size_average=False).data.item() # sum up batch loss
-            pred = output.data.max(1, keepdim=True)[1] # get the index of the max log-probability
-            correct += pred.eq(target.data.view_as(pred)).cpu().sum()
+    TP, FP, TN, FN = 0, 0, 0, 0
+    for data, target in test_loader:
+        if args.cuda:
+            data, target = data.cuda(), target.cuda()
+        data, target = Variable(data, volatile=True), Variable(target)
+        output = model(data)
+        test_loss += F.cross_entropy(output, target, size_average=False).data.item() # sum up batch loss
+        pred = output.data.max(1, keepdim=True)[1] # get the index of the max log-probability
+        correct += pred.eq(target.data.view_as(pred)).cpu().sum()
 
-            #print (pred)
-            
-            print(pred.eq(target.data.view_as(pred)).cpu())
-            # pre_mask = torch.zeros(output.size()).scatter_(1, pred.cpu().view(-1, 1), 1.)
-            # predict_num += pre_mask.sum(0)
-            # tar_mask = torch.zeros(output.size()).scatter_(1, target.data.cpu().view(-1, 1), 1.)
-            # target_num += tar_mask.sum(0)
-            # acc_mask = pre_mask*tar_mask
-            # acc_num += acc_mask.sum(0)
+        # Target Tensor: target.data.view_as(pred)
+        # Predict Tensor: pred
+        predict += pred.tolist()[0]
+        true_value += target.data.view_as(pred).tolist()[0]
 
-        # recall = acc_num/target_num
-        # precision = acc_num/predict_num
-        # F1 = 2*recall*precision/(recall+precision)
-        # test_loss /= len(test_loader.dataset)
-        print('\nTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.1f}%)\n'.format(
-            test_loss, correct, len(test_loader.dataset),
-            100. * correct / len(test_loader.dataset)))
-        return correct / float(len(test_loader.dataset))
+
+    # test_loss /= len(test_loader.dataset)
+    F1 = f1_score(true_value, predict, average='macro')
+    print('\nTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.2f}%), F1: {:.2f}\n'.format(
+        test_loss, correct, len(test_loader.dataset),
+        100. * correct / len(test_loader.dataset), F1))
+    return correct / float(len(test_loader.dataset))
 
 def save_checkpoint(state, is_best, filepath, dist):
     torch.save(state, os.path.join(filepath, f'checkpointDist{dist}.pth.tar'))
@@ -173,6 +171,7 @@ for dist in args.dist:
     train_loader, test_loader = get(root, args.batch_size, args.test_batch_size, dist)
     model = models.__dict__[args.arch](dataset=args.dataset, depth=args.depth)
     optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay)
+    model._initialize_weights()
 
     if args.resume:
         if os.path.isfile(args.resume):
