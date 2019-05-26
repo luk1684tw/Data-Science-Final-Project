@@ -10,6 +10,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 from torchvision import datasets, transforms
 from torch.autograd import Variable
+from sklearn.metrics import f1_score
 
 import models
 import sys
@@ -127,6 +128,13 @@ def test():
     model.eval()
     test_loss = 0
     correct = 0
+    #predict = []
+    #true_value = []
+    classnum = 10
+    target_num = torch.zeros((1,classnum))
+    predict_num = torch.zeros((1,classnum))
+    acc_num = torch.zeros((1,classnum))
+
     print ('len of testloader:', len(test_loader.dataset))
     for data, target in test_loader:
         if args.cuda:
@@ -137,10 +145,20 @@ def test():
         pred = output.data.max(1, keepdim=True)[1] # get the index of the max log-probability
         correct += pred.eq(target.data.view_as(pred)).cpu().sum()
 
+        pre_mask = torch.zeros(output.size()).scatter_(1, pred.cpu().view(-1, 1), 1.)
+        predict_num += pre_mask.sum(0)
+        tar_mask = torch.zeros(output.size()).scatter_(1, target.data.cpu().view(-1, 1), 1.)
+        target_num += tar_mask.sum(0)
+        acc_mask = pre_mask*tar_mask
+        acc_num += acc_mask.sum(0)
+
+    recall = acc_num/target_num
+    precision = acc_num/predict_num
+    F1 = 2*recall*precision/(recall+precision)
     test_loss /= len(test_loader.dataset)
-    print('\nTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.1f}%)\n'.format(
+    print('\nTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.1f}%), F1 Score: {:.2f}\n'.format(
         test_loss, correct, len(test_loader.dataset),
-        100. * correct / len(test_loader.dataset)))
+        100. * correct / len(test_loader.dataset)), F1)
     return correct / float(len(test_loader.dataset))
 
 def save_checkpoint(state, is_best, filepath, dist):
