@@ -17,8 +17,6 @@ distribution C:[x, x, x, x, x, x, x, x, x, y]
 def GenerateCifar10Dataset(root, trainBatchSize, testBatchSize, dist):
     distType = dist[0]
     distNum = int(dist[1:])
-    print ('[INFO] Distribution type is', distType)
-    print ('[INFO] Distribution number is', distNum)
 
     print('[INFO] Start creating datasets')
     trainTransform = transforms.Compose([
@@ -39,14 +37,17 @@ def GenerateCifar10Dataset(root, trainBatchSize, testBatchSize, dist):
     classRation = list()
     if distType == 'A':
         classRation = [1, 1, 1, 1, 1, 1, 1, 1, 1] + [distNum]
+        print ('[INFO] Distribution type is', distType, ':One class is more than the others.')
     elif distType == 'B':
         classRation = [1, 1, 1, 1, 1, 1] + [distNum]*4
+        print ('[INFO] Distribution type is', distType, ':Some classes are more than the majority.')
     elif distType == 'C':
         classRation = [distNum]*9 + [1]
+        print ('[INFO] Distribution type is', distType, ':One class is less than the others.')
     else:
         print ('[INFO] No matched distribution')
 
-    
+    print ('[INFO] Distribution number is', distNum)
 
     training = torchvision.datasets.CIFAR10(os.path.join(
         root, 'datasets/cifar10'), download=True, train=True, transform=trainTransform)
