@@ -1,0 +1,5 @@
+define x > y
+
+distribution A:[x, y, y, y, y, y, y, y, y, y] #一種特多
+distribution B:[x, x, x, x, y, y, y, y, y, y] #數種特多
+distribution C:[x, x, x, x, x, x, x, x, x, y] #一種特少
