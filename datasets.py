@@ -17,8 +17,10 @@ def GenerateCifar10Dataset(root, trainBatchSize, testBatchSize, dist_index):
         [150, 150, 150, 150, 1, 1, 1, 1, 1, 1],
         [200, 200, 200, 200, 1, 1, 1, 1, 1, 1],
         [150, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [200, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-        
+        [200, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [100, 100, 100, 100, 1, 1, 1, 1, 1, 1],
+        [100, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+
     ]
     print('start create datasets')
     trainTransform = transforms.Compose([
@@ -46,7 +48,7 @@ def GenerateCifar10Dataset(root, trainBatchSize, testBatchSize, dist_index):
     classRation = dist[dist_index].copy()
     random.shuffle(classRation)
     print ('Label distribution ratio:',classRation)
-    
+
     for idx, val in enumerate(training):
         weights[idx] = classRation[val[1]]
     sampler = WeightedRandomSampler(weights, 50000)
