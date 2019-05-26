@@ -144,7 +144,7 @@ def test():
         pred = output.data.max(1, keepdim=True)[1] # get the index of the max log-probability
         correct += pred.eq(target.data.view_as(pred)).cpu().sum()
 
-        #print (pred)
+         print (pred)
 
         #print(pred.eq(target.data.view_as(pred)).cpu())
         pre_mask = torch.zeros(output.size()).scatter_(1, pred.cpu().view(-1, 1), 1.)
@@ -160,7 +160,7 @@ def test():
     test_loss /= len(test_loader.dataset)
     print('\nTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.1f}%), F1 Score: {:.4f}\n'.format(
         test_loss, correct, len(test_loader.dataset),
-        100. * correct / len(test_loader.dataset)), F1)
+        100. * correct / len(test_loader.dataset)))
     return correct / float(len(test_loader.dataset))
 
 def save_checkpoint(state, is_best, filepath, dist):
