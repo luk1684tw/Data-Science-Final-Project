@@ -5,22 +5,22 @@ import random
 from torchvision import transforms
 from torch.utils.data import WeightedRandomSampler
 
+'''
+define x > y
+distribution A:[x, y, y, y, y, y, y, y, y, y] 
+distribution B:[x, x, x, x, y, y, y, y, y, y] 
+distribution C:[x, x, x, x, x, x, x, x, x, y] 
 
-def GenerateCifar10Dataset(root, trainBatchSize, testBatchSize, dist_index):
-    dist = [
-        [3, 3, 3, 3, 1, 1, 1, 1, 1, 1],
-        [5, 5, 5, 5, 1, 1, 1, 1, 1, 1],
-        [3, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [5, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-        [1, 5, 5, 5, 5, 5, 5, 5, 5, 5],
-        [100, 100, 100, 100, 1, 1, 1, 1, 1, 1],
-        [100, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [75, 75, 75, 75, 1, 1, 1, 1, 1, 1],
-        [75, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+'''
 
-    ]
-    print('start create datasets')
+
+def GenerateCifar10Dataset(root, trainBatchSize, testBatchSize, dist):
+    distType = dist[0]
+    distNum = int(dist[1])
+    print ('[INFO] Distribution type is', distType)
+    print ('[INFO] Distribution number is', distNum)
+
+    print('[INFO] Start creating datasets')
     trainTransform = transforms.Compose([
         transforms.Pad(4),
         transforms.RandomCrop(32),
@@ -36,27 +36,38 @@ def GenerateCifar10Dataset(root, trainBatchSize, testBatchSize, dist_index):
                              (0.2023, 0.1994, 0.2010))
     ])
 
+    classRation = list()
+    if distType == 'A':
+        classRation = [1, 1, 1, 1, 1, 1, 1, 1, 1] + [distNum]
+    elif distType == 'B':
+        classRation = [1, 1, 1, 1, 1, 1] + [distNum]*4
+    elif distType == 'C':
+        classRation = [distNum]*9 + [1]
+    else:
+        print ('[INFO] No matched distribution')
+
+    
+
     training = torchvision.datasets.CIFAR10(os.path.join(
         root, 'datasets/cifar10'), download=True, train=True, transform=trainTransform)
     testing = torchvision.datasets.CIFAR10(os.path.join(
         root, 'datasets/cifar10'), download=True, train=False, transform=testTransform)
 
-    print('create sampler')
+    print('[INFO] Creating sampler')
     weights = [0]*len(training.data)
-    classRation = dist[dist_index].copy()
     random.shuffle(classRation)
-    print ('Label distribution ratio:',classRation)
+    print ('[INFO] Label distribution ratio:',classRation)
 
     for idx, val in enumerate(training):
         weights[idx] = classRation[val[1]]
     sampler = WeightedRandomSampler(weights, 50000)
     # print (list(sampler))
 
-    print('create dataloader')
+    print('[INFO] Creating dataloader')
     trainLoader = torch.utils.data.DataLoader(
         training, trainBatchSize, shuffle=False, num_workers=2, sampler=sampler)
     testLoader = torch.utils.data.DataLoader(
         testing, testBatchSize, shuffle=True, num_workers=2)
 
-    print('return loaders')
+    print('[INFO] Return dataloaders')
     return trainLoader, testLoader
