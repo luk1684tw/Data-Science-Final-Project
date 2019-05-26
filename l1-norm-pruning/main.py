@@ -102,6 +102,15 @@ kwargs = {'num_workers': 1, 'pin_memory': True} if args.cuda else {}
 #                        ])),
 #         batch_size=args.test_batch_size, shuffle=True, **kwargs)
 
+def confusion(prediction, truth):
+    confusion_vector = prediction / truth
+
+    true_positives = torch.sum(confusion_vector == 1).item()
+    false_positives = torch.sum(confusion_vector == float('inf')).item()
+    true_negatives = torch.sum(torch.isnan(confusion_vector)).item()
+    false_negatives = torch.sum(confusion_vector == 0).item()
+
+    return true_positives, false_positives, true_negatives, false_negatives
 
 def train(epoch):
     model.train()
@@ -134,7 +143,7 @@ def test():
     target_num = torch.zeros((1,classnum))
     predict_num = torch.zeros((1,classnum))
     acc_num = torch.zeros((1,classnum))
-
+    TP, FP, TN, FN = 0
     for data, target in test_loader:
         if args.cuda:
             data, target = data.cuda(), target.cuda()
@@ -143,20 +152,17 @@ def test():
         test_loss += F.cross_entropy(output, target, size_average=False).data.item() # sum up batch loss
         pred = output.data.max(1, keepdim=True)[1] # get the index of the max log-probability
         correct += pred.eq(target.data.view_as(pred)).cpu().sum()
+        # Target Tensor: target.data.view_as(pred)
+        # Predict Tensor: pred
+        tp, fp, tn, fn = confusion(pred, target.data.view_as(pred))
+        TP += tp
+        FP += fp
+        TN += tn
+        FN += fn
 
-        #print (pred)
-        
-        print(pred.eq(target.data.view_as(pred)).cpu())
-        # pre_mask = torch.zeros(output.size()).scatter_(1, pred.cpu().view(-1, 1), 1.)
-        # predict_num += pre_mask.sum(0)
-        # tar_mask = torch.zeros(output.size()).scatter_(1, target.data.cpu().view(-1, 1), 1.)
-        # target_num += tar_mask.sum(0)
-        # acc_mask = pre_mask*tar_mask
-        # acc_num += acc_mask.sum(0)
-
-    # recall = acc_num/target_num
-    # precision = acc_num/predict_num
-    # F1 = 2*recall*precision/(recall+precision)
+    recall = TP / (TP + FN)
+    precision = TP / (TP + FP)
+    F1 = 2 * recall * precision / (recall + precision)
     # test_loss /= len(test_loader.dataset)
     print('\nTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.1f}%)\n'.format(
         test_loss, correct, len(test_loader.dataset),
