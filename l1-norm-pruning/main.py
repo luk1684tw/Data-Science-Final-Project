@@ -130,10 +130,10 @@ def test():
     correct = 0
     #predict = []
     #true_value = []
-    classnum = 10
-    target_num = torch.zeros((1,classnum))
-    predict_num = torch.zeros((1,classnum))
-    acc_num = torch.zeros((1,classnum))
+    # classnum = 10
+    # target_num = torch.zeros((1,classnum))
+    # predict_num = torch.zeros((1,classnum))
+    # acc_num = torch.zeros((1,classnum))
 
     print ('len of testloader:', len(test_loader.dataset))
     for data, target in test_loader:
