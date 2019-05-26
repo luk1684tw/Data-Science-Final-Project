@@ -16,7 +16,7 @@ distribution C:[x, x, x, x, x, x, x, x, x, y]
 
 def GenerateCifar10Dataset(root, trainBatchSize, testBatchSize, dist):
     distType = dist[0]
-    distNum = int(dist[1])
+    distNum = int(dist[1:])
     print ('[INFO] Distribution type is', distType)
     print ('[INFO] Distribution number is', distNum)
 
