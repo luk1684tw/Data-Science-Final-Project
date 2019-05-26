@@ -11,7 +11,6 @@ import torch.optim as optim
 from torchvision import datasets, transforms
 from torch.autograd import Variable
 from sklearn.metrics import f1_score
-
 import models
 import sys
 sys.path.insert(0, '..')
@@ -137,12 +136,9 @@ def test():
     model.eval()
     test_loss = 0
     correct = 0
-    #predict = []
-    #true_value = []
-    classnum = 10
-    target_num = torch.zeros((1,classnum))
-    predict_num = torch.zeros((1,classnum))
-    acc_num = torch.zeros((1,classnum))
+    predict = []
+    true_value = []
+
     TP, FP, TN, FN = 0, 0, 0, 0
     for data, target in test_loader:
         if args.cuda:
@@ -152,18 +148,15 @@ def test():
         test_loss += F.cross_entropy(output, target, size_average=False).data.item() # sum up batch loss
         pred = output.data.max(1, keepdim=True)[1] # get the index of the max log-probability
         correct += pred.eq(target.data.view_as(pred)).cpu().sum()
+
         # Target Tensor: target.data.view_as(pred)
         # Predict Tensor: pred
-        tp, fp, tn, fn = confusion(pred, target.data.view_as(pred))
-        TP += tp
-        FP += fp
-        TN += tn
-        FN += fn
+        predict += pred.toList()[0]
+        true_value += target.data.view_as(pred).toList()[0]
 
-    recall = TP / (TP + FN)
-    precision = TP / (TP + FP)
-    F1 = 2 * recall * precision / (recall + precision)
+
     # test_loss /= len(test_loader.dataset)
+    F1 = f1_score(y_true, y_pred, average='macro')
     print('\nTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.2f}%), F1: {:.2f}\n'.format(
         test_loss, correct, len(test_loader.dataset),
         100. * correct / len(test_loader.dataset)), F1)
