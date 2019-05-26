@@ -16,7 +16,7 @@ import models
 import sys
 sys.path.insert(0, '..')
 from datasets import GenerateCifar10Dataset as get
-root = '/Drive/My Drive/Colab Notebooks'
+root = 'content/Drive/My Drive/Colab Notebooks'
 
 # Training settings
 parser = argparse.ArgumentParser(description='PyTorch Slimming CIFAR training')
@@ -135,7 +135,6 @@ def test():
     # predict_num = torch.zeros((1,classnum))
     # acc_num = torch.zeros((1,classnum))
 
-    print ('len of testloader:', len(test_loader.dataset))
     for data, target in test_loader:
         if args.cuda:
             data, target = data.cuda(), target.cuda()
@@ -144,6 +143,8 @@ def test():
         test_loss += F.cross_entropy(output, target, size_average=False).data.item() # sum up batch loss
         pred = output.data.max(1, keepdim=True)[1] # get the index of the max log-probability
         correct += pred.eq(target.data.view_as(pred)).cpu().sum()
+
+        print (pred)
 
         #print(pred.eq(target.data.view_as(pred)).cpu())
         # pre_mask = torch.zeros(output.size()).scatter_(1, pred.cpu().view(-1, 1), 1.)
