@@ -159,7 +159,7 @@ def test():
     F1 = f1_score(true_value, predict, average='macro')
     print('\nTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.2f}%), F1: {:.2f}\n'.format(
         test_loss, correct, len(test_loader.dataset),
-        100. * correct / len(test_loader.dataset)), F1)
+        100. * correct / len(test_loader.dataset), F1))
     return correct / float(len(test_loader.dataset))
 
 def save_checkpoint(state, is_best, filepath, dist):
