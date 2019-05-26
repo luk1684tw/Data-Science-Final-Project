@@ -151,8 +151,8 @@ def test():
 
         # Target Tensor: target.data.view_as(pred)
         # Predict Tensor: pred
-        predict += pred.toList()[0]
-        true_value += target.data.view_as(pred).toList()[0]
+        predict += pred.tolist()[0]
+        true_value += target.data.view_as(pred).tolist()[0]
 
 
     # test_loss /= len(test_loader.dataset)
