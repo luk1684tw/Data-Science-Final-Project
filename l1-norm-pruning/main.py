@@ -145,7 +145,7 @@ def test():
         pred = output.data.max(1, keepdim=True)[1] # get the index of the max log-probability
         correct += pred.eq(target.data.view_as(pred)).cpu().sum()
 
-        print(target.data.view_as(pred))
+        print(pred.eq(target.data.view_as(pred)).cpu())
         # pre_mask = torch.zeros(output.size()).scatter_(1, pred.cpu().view(-1, 1), 1.)
         # predict_num += pre_mask.sum(0)
         # tar_mask = torch.zeros(output.size()).scatter_(1, target.data.cpu().view(-1, 1), 1.)
