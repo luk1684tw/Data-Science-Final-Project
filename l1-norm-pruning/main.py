@@ -143,7 +143,7 @@ def test():
     target_num = torch.zeros((1,classnum))
     predict_num = torch.zeros((1,classnum))
     acc_num = torch.zeros((1,classnum))
-    TP, FP, TN, FN = 0
+    TP, FP, TN, FN = 0, 0, 0, 0
     for data, target in test_loader:
         if args.cuda:
             data, target = data.cuda(), target.cuda()
