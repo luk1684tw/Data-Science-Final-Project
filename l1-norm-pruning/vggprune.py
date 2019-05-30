@@ -6,9 +6,10 @@ import torch
 import torch.nn as nn
 from torch.autograd import Variable
 from torchvision import datasets, transforms
+from datasets import GenerateCifar10Dataset as get
 
 from models import *
-
+root = 'content/Drive/My Drive/Colab Notebooks'
 
 # Prune settings
 parser = argparse.ArgumentParser(description='PyTorch Slimming CIFAR prune')
@@ -20,8 +21,12 @@ parser.add_argument('--no-cuda', action='store_true', default=False,
                     help='disables CUDA training')
 parser.add_argument('--depth', type=int, default=16,
                     help='depth of the vgg')
+parser.add_argument('--dist', default=0, type=str, nargs='+',
+                    help='distribution of dataset')
 parser.add_argument('--model', default='', type=str, metavar='PATH',
                     help='path to the model (default: none)')
+
+# TODO: modify path to save pruned model                    
 parser.add_argument('--save', default='.', type=str, metavar='PATH',
                     help='path to save pruned model (default: none)')
 
@@ -30,6 +35,9 @@ args.cuda = not args.no_cuda and torch.cuda.is_available()
 
 if not os.path.exists(args.save):
     os.makedirs(args.save)
+
+modelRoot = '~'
+args.model = os.path.join(modelRoot, args.model)
 
 model = vgg(dataset=args.dataset, depth=args.depth)
 if args.cuda:
@@ -51,23 +59,12 @@ print('Pre-processing Successful!')
 
 # simple test model after Pre-processing prune (simple set BN scales to zeros)
 def test(model):
-    kwargs = {'num_workers': 1, 'pin_memory': True} if args.cuda else {}
-    if args.dataset == 'cifar10':
-        test_loader = torch.utils.data.DataLoader(
-            datasets.CIFAR10('./data.cifar10', train=False, transform=transforms.Compose([
-                transforms.ToTensor(),
-                transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))])),
-            batch_size=args.test_batch_size, shuffle=True, **kwargs)
-    elif args.dataset == 'cifar100':
-        test_loader = torch.utils.data.DataLoader(
-            datasets.CIFAR100('./data.cifar100', train=False, transform=transforms.Compose([
-                transforms.ToTensor(),
-                transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))])),
-            batch_size=args.test_batch_size, shuffle=True, **kwargs)
-    else:
-        raise ValueError("No valid dataset is given.")
+    train_loader, test_loader = get(root, args.batch_size, args.test_batch_size, dist, True)
+
     model.eval()
     correct = 0
+    predict = []
+    true_value = []
     for data, target in test_loader:
         if args.cuda:
             data, target = data.cuda(), target.cuda()
@@ -75,9 +72,13 @@ def test(model):
         output = model(data)
         pred = output.data.max(1, keepdim=True)[1] # get the index of the max log-probability
         correct += pred.eq(target.data.view_as(pred)).cpu().sum()
-
-    print('\nTest set: Accuracy: {}/{} ({:.1f}%)\n'.format(
-        correct, len(test_loader.dataset), 100. * correct / len(test_loader.dataset)))
+        # Target Tensor: target.data.view_as(pred)
+        # Predict Tensor: pred
+        predict += pred.tolist()[0]
+        true_value += target.data.view_as(pred).tolist()[0]
+    F1 = f1_score(true_value, predict, average='macro')
+    print('\nTest set: Accuracy: {}/{} ({:.1f}%), F1 Score: {:.2f}\n'.format(
+            correct, len(test_loader.dataset), 100. * correct / len(test_loader.dataset), F1))
     return correct / float(len(test_loader.dataset))
 
 acc = test(model)
