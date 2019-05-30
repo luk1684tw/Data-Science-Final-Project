@@ -52,7 +52,7 @@ parser.add_argument('--arch', default='vgg', type=str,
                     help='architecture to use')
 parser.add_argument('--depth', default=16, type=int,
                     help='depth of the neural network')
-parser.add_argument('--dist', default=0, type=str, nargs='+',
+parser.add_argument('--dist', default=0, type=str,
                     help='distribution of dataset')
 
 args = parser.parse_args()
