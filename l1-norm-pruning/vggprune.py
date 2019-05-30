@@ -38,7 +38,7 @@ args.cuda = not args.no_cuda and torch.cuda.is_available()
 if not os.path.exists(args.save):
     os.makedirs(args.save)
 
-modelRoot = 'content/Drive/My Drive/Colab Notebooks/models/baseline'
+modelRoot = 'content/Drive/My Drive/Colab Notebooks/models'
 args.model = os.path.join(modelRoot, args.model)
 
 model = vgg(dataset=args.dataset, depth=args.depth)
