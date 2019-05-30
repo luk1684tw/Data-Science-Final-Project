@@ -37,13 +37,13 @@ def GenerateCifar10Dataset(root, trainBatchSize, testBatchSize, dist):
     classRation = list()
     if distType == 'A':
         classRation = [1, 1, 1, 1, 1, 1, 1, 1, 1] + [distNum]
-        print ('[INFO] Distribution type is', distType, ':One class is more than the others.')
+        print ('[INFO] Distribution type is', distType, ': One class is more than the others.')
     elif distType == 'B':
         classRation = [1, 1, 1, 1, 1, 1] + [distNum]*4
-        print ('[INFO] Distribution type is', distType, ':Some classes are more than the majority.')
+        print ('[INFO] Distribution type is', distType, ': Some classes are more than the majority.')
     elif distType == 'C':
         classRation = [distNum]*9 + [1]
-        print ('[INFO] Distribution type is', distType, ':One class is less than the others.')
+        print ('[INFO] Distribution type is', distType, ': One class is less than the others.')
     else:
         print ('[INFO] No matched distribution')
 
