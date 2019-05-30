@@ -30,7 +30,7 @@ parser.add_argument('--model', default='', type=str, metavar='PATH',
                     help='path to the model (default: none)')
 
 # TODO: modify path to save pruned model                    
-parser.add_argument('--save', default='content/Drive/My Drive/Colab Notebooks/models/pruned', type=str, metavar='PATH',
+parser.add_argument('--save', default='/content/Drive/My Drive/Colab Notebooks/models/pruned', type=str, metavar='PATH',
                     help='path to save pruned model (default: none)')
 
 args = parser.parse_args()
@@ -82,6 +82,7 @@ def test(model):
     F1 = f1_score(true_value, predict, average='macro')
     print('\nTest set: Accuracy: {}/{} ({:.1f}%), F1 Score: {:.2f}\n'.format(
             correct, len(test_loader.dataset), 100. * correct / len(test_loader.dataset), F1))
+    print (correct)
     return correct / float(len(test_loader.dataset))
 
 acc = test(model)
@@ -164,6 +165,6 @@ model = newmodel
 acc = test(model)
 
 num_parameters = sum([param.nelement() for param in newmodel.parameters()])
-with open(os.path.join(args.save, "prune.txt"), "w") as fp:
+with open(os.path.join(args.save, f"prune{args.dist}.txt"), "w") as fp:
     fp.write("Number of parameters: \n"+str(num_parameters)+"\n")
     fp.write("Test accuracy: \n"+str(acc)+"\n")
