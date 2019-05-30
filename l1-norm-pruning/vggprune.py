@@ -6,6 +6,8 @@ import torch
 import torch.nn as nn
 from torch.autograd import Variable
 from torchvision import datasets, transforms
+import sys
+sys.path.insert(0, '..')
 from datasets import GenerateCifar10Dataset as get
 
 from models import *
