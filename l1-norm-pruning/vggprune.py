@@ -82,8 +82,8 @@ def test(model):
     F1 = f1_score(true_value, predict, average='macro')
     print('\nTest set: Accuracy: {}/{} ({:.1f}%), F1 Score: {:.2f}\n'.format(
             correct, len(test_loader.dataset), 100. * correct / len(test_loader.dataset), F1))
-    print (correct)
-    return correct / float(len(test_loader.dataset))
+    print (correct[0])
+    return correct[0] / float(len(test_loader.dataset))
 
 acc = test(model)
 cfg = [32, 64, 'M', 128, 128, 'M', 256, 256, 256, 'M', 256, 256, 256, 'M', 256, 256, 256]
