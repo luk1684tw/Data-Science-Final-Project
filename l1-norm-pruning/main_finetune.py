@@ -17,7 +17,7 @@ from datasets import GenerateCifar10Dataset as get
 import models
 
 modelRoot = '/content/Drive/My Drive/Colab Notebooks/models/pruned'
-datasetRoot = 'content/Drive/My Drive/Colab Notebooks'
+datasetRoot = '/content/Drive/My Drive/Colab Notebooks'
 # Training settings
 parser = argparse.ArgumentParser(description='PyTorch Slimming CIFAR training')
 parser.add_argument('--dataset', type=str, default='cifar100',
