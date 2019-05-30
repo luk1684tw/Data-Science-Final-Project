@@ -63,44 +63,6 @@ if args.cuda:
 if not os.path.exists(args.save):
     os.makedirs(args.save)
 
-kwargs = {'num_workers': 1, 'pin_memory': True} if args.cuda else {}
-
-# if args.dataset == 'cifar10':
-#     train_loader, test_loader = get(root, args.batch_size, args.test_batch_size, args.dist)
-#     # train_loader = torch.utils.data.DataLoader(
-#     #     datasets.CIFAR10('./data.cifar10', train=True, download=True,
-#     #                    transform=transforms.Compose([
-#     #                        transforms.Pad(4),
-#     #                        transforms.RandomCrop(32),
-#     #                        transforms.RandomHorizontalFlip(),
-#     #                        transforms.ToTensor(),
-#     #                        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
-#     #                    ])),
-#     #     batch_size=args.batch_size, shuffle=True, **kwargs)
-#     # test_loader = torch.utils.data.DataLoader(
-#     #     datasets.CIFAR10('./data.cifar10', train=False, transform=transforms.Compose([
-#     #                        transforms.ToTensor(),
-#     #                        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
-#     #                    ])),
-#     #     batch_size=args.test_batch_size, shuffle=True, **kwargs)
-# else:
-#     train_loader = torch.utils.data.DataLoader(
-#         datasets.CIFAR100('./data.cifar100', train=True, download=True,
-#                        transform=transforms.Compose([
-#                            transforms.Pad(4),
-#                            transforms.RandomCrop(32),
-#                            transforms.RandomHorizontalFlip(),
-#                            transforms.ToTensor(),
-#                            transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
-#                        ])),
-#         batch_size=args.batch_size, shuffle=True, **kwargs)
-#     test_loader = torch.utils.data.DataLoader(
-#         datasets.CIFAR100('./data.cifar100', train=False, transform=transforms.Compose([
-#                            transforms.ToTensor(),
-#                            transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
-#                        ])),
-#         batch_size=args.test_batch_size, shuffle=True, **kwargs)
-
 def confusion(prediction, truth):
     confusion_vector = prediction / truth
 

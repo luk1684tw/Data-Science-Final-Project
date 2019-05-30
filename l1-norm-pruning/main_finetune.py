@@ -10,10 +10,14 @@ import torch.nn.functional as F
 import torch.optim as optim
 from torchvision import datasets, transforms
 from torch.autograd import Variable
+import sys
+sys.path.insert(0, '..')
+from datasets import GenerateCifar10Dataset as get
 
 import models
 
-
+modelRoot = '/content/Drive/My Drive/Colab Notebooks/models/pruned'
+datasetRoot = 'content/Drive/My Drive/Colab Notebooks'
 # Training settings
 parser = argparse.ArgumentParser(description='PyTorch Slimming CIFAR training')
 parser.add_argument('--dataset', type=str, default='cifar100',
@@ -42,12 +46,14 @@ parser.add_argument('--seed', type=int, default=1, metavar='S',
                     help='random seed (default: 1)')
 parser.add_argument('--log-interval', type=int, default=100, metavar='N',
                     help='how many batches to wait before logging training status')
-parser.add_argument('--save', default='./logs', type=str, metavar='PATH',
+parser.add_argument('--save', default='/content/Drive/My Drive/Colab Notebooks/models/finetune', type=str, metavar='PATH',
                     help='path to save prune model (default: current directory)')
 parser.add_argument('--arch', default='vgg', type=str, 
                     help='architecture to use')
 parser.add_argument('--depth', default=16, type=int,
                     help='depth of the neural network')
+parser.add_argument('--dist', default=0, type=str, nargs='+',
+                    help='distribution of dataset')
 
 args = parser.parse_args()
 args.cuda = not args.no_cuda and torch.cuda.is_available()
@@ -59,41 +65,8 @@ if args.cuda:
 if not os.path.exists(args.save):
     os.makedirs(args.save)
 
-kwargs = {'num_workers': 1, 'pin_memory': True} if args.cuda else {}
 if args.dataset == 'cifar10':
-    train_loader = torch.utils.data.DataLoader(
-        datasets.CIFAR10('./data.cifar10', train=True, download=True,
-                       transform=transforms.Compose([
-                           transforms.Pad(4),
-                           transforms.RandomCrop(32),
-                           transforms.RandomHorizontalFlip(),
-                           transforms.ToTensor(),
-                           transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
-                       ])),
-        batch_size=args.batch_size, shuffle=True, **kwargs)
-    test_loader = torch.utils.data.DataLoader(
-        datasets.CIFAR10('./data.cifar10', train=False, transform=transforms.Compose([
-                           transforms.ToTensor(),
-                           transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
-                       ])),
-        batch_size=args.test_batch_size, shuffle=True, **kwargs)
-else:
-    train_loader = torch.utils.data.DataLoader(
-        datasets.CIFAR100('./data.cifar100', train=True, download=True,
-                       transform=transforms.Compose([
-                           transforms.Pad(4),
-                           transforms.RandomCrop(32),
-                           transforms.RandomHorizontalFlip(),
-                           transforms.ToTensor(),
-                           transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
-                       ])),
-        batch_size=args.batch_size, shuffle=True, **kwargs)
-    test_loader = torch.utils.data.DataLoader(
-        datasets.CIFAR100('./data.cifar100', train=False, transform=transforms.Compose([
-                           transforms.ToTensor(),
-                           transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
-                       ])),
-        batch_size=args.test_batch_size, shuffle=True, **kwargs)
+    train_loader, test_loader = get(datasetRoot, args.batch_size, args.test_batch_size, args.dist, True)
 
 model = models.__dict__[args.arch](dataset=args.dataset, depth=args.depth)
 
