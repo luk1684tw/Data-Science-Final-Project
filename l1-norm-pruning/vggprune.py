@@ -6,11 +6,12 @@ import torch
 import torch.nn as nn
 from torch.autograd import Variable
 from torchvision import datasets, transforms
+from sklearn.metrics import f1_score
+from models import *
 import sys
 sys.path.insert(0, '..')
 from datasets import GenerateCifar10Dataset as get
 
-from models import *
 root = 'content/Drive/My Drive/Colab Notebooks'
 
 # Prune settings
@@ -23,7 +24,7 @@ parser.add_argument('--no-cuda', action='store_true', default=False,
                     help='disables CUDA training')
 parser.add_argument('--depth', type=int, default=16,
                     help='depth of the vgg')
-parser.add_argument('--dist', default=0, type=str, nargs='+',
+parser.add_argument('--dist', default=0, type=str,
                     help='distribution of dataset')
 parser.add_argument('--model', default='', type=str, metavar='PATH',
                     help='path to the model (default: none)')
@@ -38,7 +39,7 @@ args.cuda = not args.no_cuda and torch.cuda.is_available()
 if not os.path.exists(args.save):
     os.makedirs(args.save)
 
-modelRoot = 'content/Drive/My Drive/Colab Notebooks/models'
+modelRoot = '/content/Drive/My Drive/Colab Notebooks/models'
 args.model = os.path.join(modelRoot, args.model)
 model = vgg(dataset=args.dataset, depth=args.depth)
 if args.cuda:
@@ -61,7 +62,7 @@ print('Pre-processing Successful!')
 
 # simple test model after Pre-processing prune (simple set BN scales to zeros)
 def test(model):
-    train_loader, test_loader = get(root, args.batch_size, args.test_batch_size, dist, True)
+    train_loader, test_loader = get(root, 64, args.test_batch_size, args.dist, True)
 
     model.eval()
     correct = 0
