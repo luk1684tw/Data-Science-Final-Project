@@ -1,3 +1,4 @@
 Dist A75: [1, 1, 1, 1, 1, 1, 1, 1, 1, 75], Accuracy: 8701/10000 (87.00%), F1: 0.89, url: https://drive.google.com/open?id=1nJ_ryBkq1sLB2I2g0cutYLbs3-_y3Llg
 Dist B75: [75, 75, 1, 1, 75, 1, 1, 1, 75, 1], Accuracy: 8293/10000 (82.00%), F1: 0.78, url: https://drive.google.com/open?id=1-rbT1_MjwWok_bnx5qHnC1C5vccr2dGs
 Dist C75: [75, 75, 75, 75, 1, 75, 75, 75, 75, 75], Accuracy: 8784/10000 (87.00%), F1: 0.82, url: https://drive.google.com/open?id=1LlCLZ47snVOn63Cqb4V5j4jAll1Oyynk
+Dist C100: [100, 100, 100, 100, 100, 100, 100, 1, 100, 100], Accuracy: 8936/10000 (89.00%), F1: 0.92, url: https://drive.google.com/open?id=17zqzazEAv3bfw5Cn8dh0mI8_qquDpNjX
