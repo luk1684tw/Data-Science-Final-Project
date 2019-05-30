@@ -27,7 +27,7 @@ parser.add_argument('--model', default='', type=str, metavar='PATH',
                     help='path to the model (default: none)')
 
 # TODO: modify path to save pruned model                    
-parser.add_argument('--save', default='.', type=str, metavar='PATH',
+parser.add_argument('--save', default='content/Drive/My Drive/Colab Notebooks/models/pruned', type=str, metavar='PATH',
                     help='path to save pruned model (default: none)')
 
 args = parser.parse_args()
@@ -36,7 +36,7 @@ args.cuda = not args.no_cuda and torch.cuda.is_available()
 if not os.path.exists(args.save):
     os.makedirs(args.save)
 
-modelRoot = '~'
+modelRoot = 'content/Drive/My Drive/Colab Notebooks/models/baseline'
 args.model = os.path.join(modelRoot, args.model)
 
 model = vgg(dataset=args.dataset, depth=args.depth)
@@ -155,7 +155,7 @@ for [m0, m1] in zip(model.modules(), newmodel.modules()):
         m1.running_mean = m0.running_mean.clone()
         m1.running_var = m0.running_var.clone()
 
-torch.save({'cfg': cfg, 'state_dict': newmodel.state_dict()}, os.path.join(args.save, 'pruned.pth.tar'))
+torch.save({'cfg': cfg, 'state_dict': newmodel.state_dict()}, os.path.join(args.save, f'pruned{dist}.pth.tar'))
 print(newmodel)
 model = newmodel
 acc = test(model)
