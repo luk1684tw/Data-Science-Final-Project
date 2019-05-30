@@ -65,8 +65,7 @@ if args.cuda:
 if not os.path.exists(args.save):
     os.makedirs(args.save)
 
-if args.dataset == 'cifar10':
-    train_loader, test_loader = get(datasetRoot, args.batch_size, args.test_batch_size, args.dist, True)
+train_loader, test_loader = get(datasetRoot, args.batch_size, args.test_batch_size, args.dist, False)
 
 model = models.__dict__[args.arch](dataset=args.dataset, depth=args.depth)
 
