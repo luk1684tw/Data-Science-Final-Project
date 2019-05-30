@@ -70,7 +70,7 @@ train_loader, test_loader = get(datasetRoot, args.batch_size, args.test_batch_si
 model = models.__dict__[args.arch](dataset=args.dataset, depth=args.depth)
 
 if args.refine:
-    checkpoint = torch.load(args.refine)
+    checkpoint = torch.load(os.path.join(modelRoot, args.refine))
     model = models.__dict__[args.arch](dataset=args.dataset, depth=args.depth, cfg=checkpoint['cfg'])
     model.load_state_dict(checkpoint['state_dict'])
 
@@ -133,7 +133,7 @@ def test():
     return correct / float(len(test_loader.dataset))
 
 def save_checkpoint(state, is_best, filepath):
-    torch.save(state, os.path.join(filepath, 'checkpoint.pth.tar'))
+    torch.save(state, os.path.join(filepath, 'finetune{args.dist}.pth.tar'))
     if is_best:
         shutil.copyfile(os.path.join(filepath, 'checkpoint.pth.tar'), os.path.join(filepath, 'model_best.pth.tar'))
 
