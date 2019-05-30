@@ -14,7 +14,14 @@ distribution C:[x, x, x, x, x, x, x, x, x, y]
 '''
 
 
-def GenerateCifar10Dataset(root, trainBatchSize, testBatchSize, dist):
+def GenerateCifar10Dataset(root, trainBatchSize, testBatchSize, dist, test):
+    distTest = [
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 75],
+        [75, 75, 1, 1, 75, 1, 1, 1, 75, 1],
+        [75, 75, 75, 75, 1, 75, 75, 75, 75, 75]
+    ]
+    testSet = {'A75': 0, 'B75': 1, 'C75': 2, 'A100': 3, 'B100': 4, 'C100': 5}
+
     distType = dist[0]
     distNum = int(dist[1:])
 
@@ -34,20 +41,26 @@ def GenerateCifar10Dataset(root, trainBatchSize, testBatchSize, dist):
                              (0.2023, 0.1994, 0.2010))
     ])
 
+    index = testSet[dist]
     classRation = list()
-    if distType == 'A':
-        classRation = [1, 1, 1, 1, 1, 1, 1, 1, 1] + [distNum]
-        print ('[INFO] Distribution type is', distType, ': One class is more than the others.')
-    elif distType == 'B':
-        classRation = [1, 1, 1, 1, 1, 1] + [distNum]*4
-        print ('[INFO] Distribution type is', distType, ': Some classes are more than the majority.')
-    elif distType == 'C':
-        classRation = [distNum]*9 + [1]
-        print ('[INFO] Distribution type is', distType, ': One class is less than the others.')
+    if not test:
+        if distType == 'A':
+            classRation = [1, 1, 1, 1, 1, 1, 1, 1, 1] + [distNum]
+            print ('[INFO] Distribution type is', distType, ': One class is more than the others.')
+        elif distType == 'B':
+            classRation = [1, 1, 1, 1, 1, 1] + [distNum]*4
+            print ('[INFO] Distribution type is', distType, ': Some classes are more than the majority.')
+        elif distType == 'C':
+            classRation = [distNum]*9 + [1]
+            print ('[INFO] Distribution type is', distType, ': One class is less than the others.')
+        else:
+            print ('[INFO] No matched distribution')
+        random.shuffle(classRation)
     else:
-        print ('[INFO] No matched distribution')
+        classRation = distTest[index]
 
     print ('[INFO] Distribution number is', distNum)
+    print ('[INFO] Label distribution ratio:',classRation)
 
     training = torchvision.datasets.CIFAR10(os.path.join(
         root, 'datasets/cifar10'), download=True, train=True, transform=trainTransform)
@@ -56,8 +69,7 @@ def GenerateCifar10Dataset(root, trainBatchSize, testBatchSize, dist):
 
     print('[INFO] Creating sampler')
     weights = [0]*len(training.data)
-    random.shuffle(classRation)
-    print ('[INFO] Label distribution ratio:',classRation)
+
 
     for idx, val in enumerate(training):
         weights[idx] = classRation[val[1]]

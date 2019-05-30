@@ -168,7 +168,7 @@ def save_checkpoint(state, is_best, filepath, dist):
         shutil.copyfile(os.path.join(filepath, 'checkpoint.pth.tar'), os.path.join(filepath, 'model_best.pth.tar'))
 
 for dist in args.dist:
-    train_loader, test_loader = get(root, args.batch_size, args.test_batch_size, dist)
+    train_loader, test_loader = get(root, args.batch_size, args.test_batch_size, dist, False)
     model = models.__dict__[args.arch](dataset=args.dataset, depth=args.depth)
     optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay)
     model._initialize_weights()
