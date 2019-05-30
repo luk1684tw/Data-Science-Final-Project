@@ -71,7 +71,9 @@ train_loader, test_loader = get(datasetRoot, args.batch_size, args.test_batch_si
 model = models.__dict__[args.arch](dataset=args.dataset, depth=args.depth)
 
 if args.refine:
-    checkpoint = torch.load(os.path.join(modelRoot, args.refine))
+    modelPath = os.path.join(modelRoot, args.refine)
+    print (f'[INFO] Loading pruned-model from {modelPath}')
+    checkpoint = torch.load(modelPath)
     model = models.__dict__[args.arch](dataset=args.dataset, depth=args.depth, cfg=checkpoint['cfg'])
     model.load_state_dict(checkpoint['state_dict'])
 
@@ -123,7 +125,7 @@ def test():
             data, target = data.cuda(), target.cuda()
         data, target = Variable(data, volatile=True), Variable(target)
         output = model(data)
-        test_loss += F.cross_entropy(output, target, size_average=False).data[0] # sum up batch loss
+        test_loss += F.cross_entropy(output, target, size_average=False).data.item() # sum up batch loss
         pred = output.data.max(1, keepdim=True)[1] # get the index of the max log-probability
         correct += pred.eq(target.data.view_as(pred)).cpu().sum()
 

@@ -101,7 +101,6 @@ def test():
     predict = []
     true_value = []
 
-    TP, FP, TN, FN = 0, 0, 0, 0
     for data, target in test_loader:
         if args.cuda:
             data, target = data.cuda(), target.cuda()
