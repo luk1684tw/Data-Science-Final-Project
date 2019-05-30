@@ -137,8 +137,8 @@ def test():
 
 def save_checkpoint(state, is_best, filepath):
     torch.save(state, os.path.join(filepath, 'finetune{args.dist}.pth.tar'))
-    # if is_best:
-    #     shutil.copyfile(os.path.join(filepath, 'checkpoint.pth.tar'), os.path.join(filepath, 'model_best.pth.tar'))
+    if is_best:
+        shutil.copyfile(os.path.join(filepath, 'finetune{args.dist}.pth.tar'), os.path.join(filepath, 'model_best.pth.tar'))
 
 best_prec1 = 0.
 for epoch in range(args.start_epoch, args.epochs):
