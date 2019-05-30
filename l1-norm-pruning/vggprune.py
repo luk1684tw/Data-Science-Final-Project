@@ -40,22 +40,24 @@ if not os.path.exists(args.save):
 
 modelRoot = 'content/Drive/My Drive/Colab Notebooks/models'
 args.model = os.path.join(modelRoot, args.model)
-
+modelPath = os.path.join(modelRoot, args.model)
 model = vgg(dataset=args.dataset, depth=args.depth)
 if args.cuda:
     model.cuda()
 
+print (args.model)
+print (modelPath)
 if args.model:
-    if os.path.isfile(args.model):
-        print("=> loading checkpoint '{}'".format(args.model))
-        checkpoint = torch.load(args.model)
+    if os.path.isfile(modelPath):
+        print("=> loading checkpoint '{}'".format(modelPath))
+        checkpoint = torch.load(modelPath)
         args.start_epoch = checkpoint['epoch']
         best_prec1 = checkpoint['best_prec1']
         model.load_state_dict(checkpoint['state_dict'])
         print("=> loaded checkpoint '{}' (epoch {}) Prec1: {:f}"
-              .format(args.model, checkpoint['epoch'], best_prec1))
+              .format(modelPath, checkpoint['epoch'], best_prec1))
     else:
-        print("=> no checkpoint found at '{}'".format(args.resume))
+        print("=> no checkpoint found at '{}'".format(args.model))
 
 print('Pre-processing Successful!')
 
