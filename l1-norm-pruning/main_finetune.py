@@ -13,6 +13,7 @@ from torch.autograd import Variable
 import sys
 sys.path.insert(0, '..')
 from datasets import GenerateCifar10Dataset as get
+from sklearn.metrics import f1_score
 
 import models
 
@@ -120,6 +121,9 @@ def test():
     model.eval()
     test_loss = 0
     correct = 0
+    predict = []
+    true_value = []
+
     for data, target in test_loader:
         if args.cuda:
             data, target = data.cuda(), target.cuda()
@@ -129,10 +133,14 @@ def test():
         pred = output.data.max(1, keepdim=True)[1] # get the index of the max log-probability
         correct += pred.eq(target.data.view_as(pred)).cpu().sum()
 
+        predict += pred.tolist()[0]
+        true_value += target.data.view_as(pred).tolist()[0]
+
     test_loss /= len(test_loader.dataset)
-    print('\nTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.1f}%)\n'.format(
+    F1 = f1_score(true_value, predict, average='macro')
+    print('\nTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.2f}%), F1: {:.2f}\n'.format(
         test_loss, correct, len(test_loader.dataset),
-        100. * correct / len(test_loader.dataset)))
+        100. * correct / len(test_loader.dataset), F1))
     return correct.item() / float(len(test_loader.dataset))
 
 def save_checkpoint(state, is_best, filepath):
