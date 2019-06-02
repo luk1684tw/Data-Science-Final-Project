@@ -115,8 +115,8 @@ def train(epoch):
             print('Train Epoch: {} [{}/{} ({:.1f}%)]\tLoss: {:.6f}'.format(
                 epoch, batch_idx * len(data), len(train_loader.dataset),
                 100. * batch_idx / len(train_loader), loss.data.item()))
-        print ('data.item',loss.data.item())
-        print ('item', loss.item())
+        # print ('data.item',loss.data.item())
+        # print ('item', loss.item())
 
 def test():
     model.eval()
