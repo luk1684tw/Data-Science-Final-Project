@@ -141,7 +141,7 @@ def test():
     print('\nTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.2f}%), F1: {:.2f}\n'.format(
         test_loss, correct, len(test_loader.dataset),
         100. * correct / len(test_loader.dataset), F1))
-    return correct.item() / float(len(test_loader.dataset))
+    return correct.item() / float(len(test_loader.dataset)), F1
 
 def save_checkpoint(state, is_best, filepath):
     torch.save(state, os.path.join(filepath, f'finetune{args.dist}.pth.tar'))
@@ -149,10 +149,13 @@ def save_checkpoint(state, is_best, filepath):
         shutil.copyfile(os.path.join(filepath, f'finetune{args.dist}.pth.tar'), os.path.join(filepath, f'model{args.dist}_best.pth.tar'))
 
 best_prec1 = 0.
+F1 = 0.
 for epoch in range(args.start_epoch, args.epochs):
     train(epoch)
-    prec1 = test()
+    prec1, f1 = test()
     is_best = prec1 > best_prec1
+    if is_best:
+        F1 = f1
     best_prec1 = max(prec1, best_prec1)
     save_checkpoint({
         'epoch': epoch + 1,
@@ -161,3 +164,5 @@ for epoch in range(args.start_epoch, args.epochs):
         'optimizer': optimizer.state_dict(),
         'cfg': model.cfg
     }, is_best, filepath=args.save)
+with open(os.path.join(args.save, f'bestAccu{args.dist}.txt'), 'w') as file:
+    file.write(f'Accu: {best_prec1}, F1: {F1}\n')

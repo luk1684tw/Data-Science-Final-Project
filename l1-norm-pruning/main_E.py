@@ -29,7 +29,7 @@ parser.add_argument('--batch-size', type=int, default=64, metavar='N',
                     help='input batch size for training (default: 64)')
 parser.add_argument('--test-batch-size', type=int, default=256, metavar='N',
                     help='input batch size for testing (default: 256)')
-parser.add_argument('--epochs', type=int, default=160, metavar='N',
+parser.add_argument('--epochs', type=int, default=120, metavar='N',
                     help='number of epochs to train (default: 160)')
 parser.add_argument('--start-epoch', default=0, type=int, metavar='N',
                     help='manual epoch number (useful on restarts)')
@@ -47,7 +47,7 @@ parser.add_argument('--seed', type=int, default=1, metavar='S',
                     help='random seed (default: 1)')
 parser.add_argument('--log-interval', type=int, default=100, metavar='N',
                     help='how many batches to wait before logging training status')
-parser.add_argument('--save', default='./logs', type=str, metavar='PATH',
+parser.add_argument('--save', default='/content/Drive/My Drive/Colab Notebooks/models/scratchE', type=str, metavar='PATH',
                     help='path to save prune model (default: current directory)')
 parser.add_argument('--arch', default='vgg', type=str, 
                     help='architecture to use')
@@ -142,7 +142,7 @@ def test():
     print('\nTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.2f}%), F1: {:.2f}\n'.format(
         test_loss, correct, len(test_loader.dataset),
         100. * correct / len(test_loader.dataset), F1))
-    return correct.data.item() / float(len(test_loader.dataset))
+    return correct.data.item() / float(len(test_loader.dataset)), F1
 
 def save_checkpoint(state, is_best, filepath):
     torch.save(state, os.path.join(filepath, 'checkpoint.pth.tar'))
@@ -150,14 +150,17 @@ def save_checkpoint(state, is_best, filepath):
         shutil.copyfile(os.path.join(filepath, 'checkpoint.pth.tar'), os.path.join(filepath, 'model_best.pth.tar'))
 
 best_prec1 = 0.
+F1 = 0.
 for epoch in range(args.start_epoch, args.epochs):
     if epoch in [args.epochs*0.5, args.epochs*0.75]:
         for param_group in optimizer.param_groups:
             param_group['lr'] *= 0.1
     train(epoch)
-    prec1 = test()
+    prec1, f1 = test()
     is_best = prec1 > best_prec1
     best_prec1 = max(prec1, best_prec1)
+    if is_best:
+        F1 = f1
     save_checkpoint({
         'epoch': epoch + 1,
         'state_dict': model.state_dict(),
@@ -165,3 +168,5 @@ for epoch in range(args.start_epoch, args.epochs):
         'optimizer': optimizer.state_dict(),
         'cfg': model.cfg
     }, is_best, filepath=args.save)
+with open(os.path.join(args.save, f'bestAccu{args.dist}.txt'), 'w') as file:
+    file.write(f'Accu: {best_prec1}, F1: {F1}\n')
