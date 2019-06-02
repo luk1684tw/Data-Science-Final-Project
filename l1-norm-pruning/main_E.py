@@ -145,9 +145,9 @@ def test():
     return correct.data.item() / float(len(test_loader.dataset)), F1
 
 def save_checkpoint(state, is_best, filepath):
-    torch.save(state, os.path.join(filepath, 'checkpoint.pth.tar'))
+    torch.save(state, os.path.join(filepath, f'scratchE{args.dist}.pth.tar'))
     if is_best:
-        shutil.copyfile(os.path.join(filepath, 'checkpoint.pth.tar'), os.path.join(filepath, 'model_best.pth.tar'))
+        shutil.copyfile(os.path.join(filepath, f'scratchE{args.dist}.pth.tar'), os.path.join(filepath, f'model{args.dist}_best.pth.tar'))
 
 best_prec1 = 0.
 F1 = 0.
