@@ -122,6 +122,7 @@ def test():
     model.eval()
     test_loss = 0
     correct = 0
+    # F1-score 
     predict = []
     true_value = []
 
@@ -133,7 +134,7 @@ def test():
         test_loss += F.cross_entropy(output, target, size_average=False).item() # sum up batch loss
         pred = output.data.max(1, keepdim=True)[1] # get the index of the max log-probability
         correct += pred.eq(target.data.view_as(pred)).cpu().sum()
-
+        #F1-score
         predict += pred.tolist()[0]
         true_value += target.data.view_as(pred).tolist()[0]
 
