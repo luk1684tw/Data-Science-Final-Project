@@ -161,7 +161,7 @@ for epoch in range(args.start_epoch, args.epochs):
         for param_group in optimizer.param_groups:
             param_group['lr'] *= 0.1
     train(epoch)
-    prec1 = test()
+    prec1, f1 = test()
     is_best = prec1 > best_prec1
     best_prec1 = max(prec1, best_prec1)
     if is_best:

@@ -66,9 +66,9 @@ def GenerateCifar10Dataset(root, trainBatchSize, testBatchSize, dist, test):
     print ('[INFO] Label distribution ratio:',classRation)
 
     training = torchvision.datasets.CIFAR10(os.path.join(
-        root, 'datasets/cifar10'), download=False, train=True, transform=trainTransform)
+        root, 'datasets/cifar10'), download=True, train=True, transform=trainTransform)
     testing = torchvision.datasets.CIFAR10(os.path.join(
-        root, 'datasets/cifar10'), download=False, train=False, transform=testTransform)
+        root, 'datasets/cifar10'), download=True, train=False, transform=testTransform)
 
     print('[INFO] Creating sampler')
     weights = [0]*len(training.data)
