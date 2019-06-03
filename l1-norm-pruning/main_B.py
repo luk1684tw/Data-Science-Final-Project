@@ -11,9 +11,15 @@ import torch.optim as optim
 from torchvision import datasets, transforms
 from torch.autograd import Variable
 
+# New Import
+import sys
+sys.path.insert(0, '..')
+from datasets import GenerateCifar10Dataset as get
+from sklearn.metrics import f1_score
 import models
 from compute_flops import print_model_param_flops
-
+modelRoot = '/content/Drive/My Drive/Colab Notebooks/models/pruned'
+datasetRoot = '/content/Drive/My Drive/Colab Notebooks'
 
 # Training settings
 parser = argparse.ArgumentParser(description='PyTorch Slimming CIFAR training')
@@ -43,7 +49,7 @@ parser.add_argument('--seed', type=int, default=1, metavar='S',
                     help='random seed (default: 1)')
 parser.add_argument('--log-interval', type=int, default=100, metavar='N',
                     help='how many batches to wait before logging training status')
-parser.add_argument('--save', default='./logs', type=str, metavar='PATH',
+parser.add_argument('--save', default='/content/Drive/My Drive/Colab Notebooks/models/scratchB', type=str, metavar='PATH',
                     help='path to save prune model (default: current directory)')
 parser.add_argument('--arch', default='vgg', type=str, 
                     help='architecture to use')
@@ -61,45 +67,15 @@ if not os.path.exists(args.save):
     os.makedirs(args.save)
 
 kwargs = {'num_workers': 1, 'pin_memory': True} if args.cuda else {}
-if args.dataset == 'cifar10':
-    train_loader = torch.utils.data.DataLoader(
-        datasets.CIFAR10('./data.cifar10', train=True, download=True,
-                       transform=transforms.Compose([
-                           transforms.Pad(4),
-                           transforms.RandomCrop(32),
-                           transforms.RandomHorizontalFlip(),
-                           transforms.ToTensor(),
-                           transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
-                       ])),
-        batch_size=args.batch_size, shuffle=True, **kwargs)
-    test_loader = torch.utils.data.DataLoader(
-        datasets.CIFAR10('./data.cifar10', train=False, transform=transforms.Compose([
-                           transforms.ToTensor(),
-                           transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
-                       ])),
-        batch_size=args.test_batch_size, shuffle=True, **kwargs)
-else:
-    train_loader = torch.utils.data.DataLoader(
-        datasets.CIFAR100('./data.cifar100', train=True, download=True,
-                       transform=transforms.Compose([
-                           transforms.Pad(4),
-                           transforms.RandomCrop(32),
-                           transforms.RandomHorizontalFlip(),
-                           transforms.ToTensor(),
-                           transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
-                       ])),
-        batch_size=args.batch_size, shuffle=True, **kwargs)
-    test_loader = torch.utils.data.DataLoader(
-        datasets.CIFAR100('./data.cifar100', train=False, transform=transforms.Compose([
-                           transforms.ToTensor(),
-                           transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
-                       ])),
-        batch_size=args.test_batch_size, shuffle=True, **kwargs)
+
+train_loader, test_loader = get(datasetRoot, args.batch_size, args.test_batch_size, args.dist, True)
 
 model = models.__dict__[args.arch](dataset=args.dataset, depth=args.depth)
 
 if args.scratch:
-    checkpoint = torch.load(args.scratch)
+    modelPath = os.path.join(modelRoot, args.scratch)
+    print ('[INFO] Loading model from', modelPath)
+    checkpoint = torch.load(modelPath)
     model = models.__dict__[args.arch](dataset=args.dataset, depth=args.depth, cfg=checkpoint['cfg'])
 
 model_ref = models.__dict__[args.arch](dataset=args.dataset, depth=args.depth)
@@ -151,6 +127,9 @@ def test():
     model.eval()
     test_loss = 0
     correct = 0
+    # F1-score 
+    predict = []
+    true_value = []
     for data, target in test_loader:
         if args.cuda:
             data, target = data.cuda(), target.cuda()
@@ -159,19 +138,24 @@ def test():
         test_loss += F.cross_entropy(output, target, size_average=False).data[0] # sum up batch loss
         pred = output.data.max(1, keepdim=True)[1] # get the index of the max log-probability
         correct += pred.eq(target.data.view_as(pred)).cpu().sum()
-
+        #F1-score
+        predict += pred.tolist()[0]
+        true_value += target.data.view_as(pred).tolist()[0]
     test_loss /= len(test_loader.dataset)
-    print('\nTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.1f}%)\n'.format(
+    F1 = f1_score(true_value, predict, average='macro')
+    print('\nTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.2f}%), F1: {:.2f}\n'.format(
         test_loss, correct, len(test_loader.dataset),
-        100. * correct / len(test_loader.dataset)))
-    return correct / float(len(test_loader.dataset))
+        100. * correct / len(test_loader.dataset), F1))
+    return correct.data.item() / float(len(test_loader.dataset)), F1
 
 def save_checkpoint(state, is_best, filepath):
-    torch.save(state, os.path.join(filepath, 'checkpoint.pth.tar'))
+    torch.save(state, os.path.join(filepath, f'scratchB{args.dist}.pth.tar'))
     if is_best:
-        shutil.copyfile(os.path.join(filepath, 'checkpoint.pth.tar'), os.path.join(filepath, 'model_best.pth.tar'))
+        shutil.copyfile(os.path.join(filepath, f'scratchB{args.dist}.pth.tar'), os.path.join(filepath, f'model{args.dist}_best.pth.tar'))
+
 
 best_prec1 = 0.
+F1 = 0.
 for epoch in range(args.start_epoch, args.epochs):
     if epoch in [int(args.epochs*0.5), int(args.epochs*0.75)]:
         for param_group in optimizer.param_groups:
@@ -180,6 +164,8 @@ for epoch in range(args.start_epoch, args.epochs):
     prec1 = test()
     is_best = prec1 > best_prec1
     best_prec1 = max(prec1, best_prec1)
+    if is_best:
+        F1 = f1
     save_checkpoint({
         'epoch': epoch + 1,
         'state_dict': model.state_dict(),
@@ -187,3 +173,5 @@ for epoch in range(args.start_epoch, args.epochs):
         'optimizer': optimizer.state_dict(),
         'cfg': model.cfg
     }, is_best, filepath=args.save)
+with open(os.path.join(args.save, f'bestAccu{args.dist}.txt'), 'w') as file:
+    file.write(f'Accu: {best_prec1}, F1: {F1}\n')
