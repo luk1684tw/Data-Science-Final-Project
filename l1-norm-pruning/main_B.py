@@ -68,7 +68,6 @@ if args.cuda:
 if not os.path.exists(args.save):
     os.makedirs(args.save)
 
-kwargs = {'num_workers': 1, 'pin_memory': True} if args.cuda else {}
 
 train_loader, test_loader = get(datasetRoot, args.batch_size, args.test_batch_size, args.dist, True)
 

@@ -44,7 +44,6 @@ def GenerateCifar10Dataset(root, trainBatchSize, testBatchSize, dist, test):
                              (0.2023, 0.1994, 0.2010))
     ])
 
-    index = testSet[dist]
     classRation = list()
     if not test:
         if distType == 'A':
@@ -60,6 +59,7 @@ def GenerateCifar10Dataset(root, trainBatchSize, testBatchSize, dist, test):
             print ('[INFO] No matched distribution')
         random.shuffle(classRation)
     else:
+        index = testSet[dist]
         classRation = distTest[index]
 
     print ('[INFO] Distribution number is', distNum)
