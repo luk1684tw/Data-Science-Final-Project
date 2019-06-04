@@ -127,7 +127,7 @@ def test():
 def save_checkpoint(state, is_best, filepath, dist):
     torch.save(state, os.path.join(filepath, f'checkpointDist{dist}.pth.tar'))
     if is_best:
-        shutil.copyfile(os.path.join(filepath, 'checkpoint.pth.tar'), os.path.join(filepath, 'model_best.pth.tar'))
+        shutil.copyfile(os.path.join(filepath, f'checkpointDist{dist}.pth.tar'), os.path.join(filepath, f'model{dist}_best.pth.tar'))
 
 for dist in args.dist:
     train_loader, test_loader = get(root, args.batch_size, args.test_batch_size, dist, False)
