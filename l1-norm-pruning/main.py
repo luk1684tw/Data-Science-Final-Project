@@ -15,7 +15,7 @@ import models
 import sys
 sys.path.insert(0, '..')
 from datasets import GenerateCifar10Dataset as get
-root = 'content/Drive/My Drive/Colab Notebooks'
+root = '/content/Drive/My Drive/Colab Notebooks'
 
 # Training settings
 parser = argparse.ArgumentParser(description='PyTorch Slimming CIFAR training')
