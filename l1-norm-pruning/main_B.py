@@ -84,7 +84,7 @@ model_ref = models.__dict__[args.arch](dataset=args.dataset, depth=args.depth)
 
 flops_std = print_model_param_flops(model_ref, 32)
 flops_small = print_model_param_flops(model, 32)
-args.epochs = int(160 * (flops_std / flops_small))
+args.epochs = int(120 * (flops_std / flops_small))
 
 if args.cuda:
     model.cuda()
