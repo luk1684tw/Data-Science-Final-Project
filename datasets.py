@@ -26,7 +26,7 @@ def GenerateCifar10Dataset(root, trainBatchSize, testBatchSize, dist, test):
         [1, 1, 1, 200, 200, 1, 200, 200, 1, 1],
         [200, 200, 200, 200, 200, 1, 200, 200, 200, 200]
     ]
-    testSet = {'A75': 0, 'B75': 1, 'C75': 2, 'A100': 3, 'B100': 4, 'C100': 5}
+    testSet = {'A75': 0, 'B75': 1, 'C75': 2, 'A100': 3, 'B100': 4, 'C100': 5, 'A200': 6, 'B200': 7, 'C200': 8}
 
     distType = dist[0]
     distNum = int(dist[1:])
