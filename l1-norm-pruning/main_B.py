@@ -162,7 +162,7 @@ def plot_kernels(tensor, num_cols=6):
     # if not tensor.shape[-1]==3:
     #     raise Exception("last dim needs to be 3 to plot")
     print(tensor.shape)
-    tn = reshape(tensor, [1, tensor.shape[0]*tensor.shape[1]*tensor.shape[2]*tensor.shape[3]]).numpy()
+    tn = tensor.view(1, tensor.shape[0]*tensor.shape[1]*tensor.shape[2]*tensor.shape[3]).numpy()
     plt.hist(tn)
     plt.show()
     # num_kernels = tensor.shape[0]
