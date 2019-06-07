@@ -187,10 +187,9 @@ for epoch in range(args.start_epoch, args.epochs):
     filters = mm.modules
     body_model = [i for i in mm.children()][0]
     layer1 = body_model[0]
-    tensor = layer1.weight.data.numpy()
+    tensor = layer1.weight.cpu().data.numpy()
     plot_kernels(tensor)
 
-    plot_weights()
     prec1, f1 = test()
     is_best = prec1 > best_prec1
     best_prec1 = max(prec1, best_prec1)
