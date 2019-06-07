@@ -168,7 +168,7 @@ for epoch in range(0, 1):#range(args.start_epoch, args.epochs):
     train(epoch)
 
     # Plot 
-    for k, v in model.state_dict().iteritems():
+    for k, v in model.state_dict().items():
         print("Layer {}".format(k))
         print(v)
 
