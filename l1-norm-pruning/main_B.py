@@ -157,10 +157,10 @@ def save_checkpoint(state, is_best, filepath):
         shutil.copyfile(os.path.join(filepath, f'scratchB{args.dist}.pth.tar'), os.path.join(filepath, f'model{args.dist}_best.pth.tar'))
 
 def plot_kernels(tensor, num_cols=6):
-    if not tensor.ndim==4:
-        raise Exception("assumes a 4D tensor")
-    if not tensor.shape[-1]==3:
-        raise Exception("last dim needs to be 3 to plot")
+    # if not tensor.ndim==4:
+    #     raise Exception("assumes a 4D tensor")
+    # if not tensor.shape[-1]==3:
+    #     raise Exception("last dim needs to be 3 to plot")
     num_kernels = tensor.shape[0]
     num_rows = 1+ num_kernels // num_cols
     fig = plt.figure(figsize=(num_cols,num_rows))
