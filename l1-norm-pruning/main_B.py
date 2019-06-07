@@ -157,20 +157,20 @@ def save_checkpoint(state, is_best, filepath):
         shutil.copyfile(os.path.join(filepath, f'scratchB{args.dist}.pth.tar'), os.path.join(filepath, f'model{args.dist}_best.pth.tar'))
 
 def plot_kernels(tensor, num_cols=6):
-    num_rows = 11
-    fig = plt.figure(figsize=(num_cols,num_rows))
-    i = 0
-    for t in tensor:
-        tmp= i+1 if i<66 else i
-        ax1 = fig.add_subplot(num_rows,num_cols,tmp)
-        pilTrans = transforms.ToPILImage()
-        pilImg = pilTrans(t)
-        ax1.imshow(pilImg, interpolation='none')
-        #print(tensor[i])
-        ax1.axis('off')
-        ax1.set_xticklabels([])
-        ax1.set_yticklabels([])
-        i+=1
+    print(tensor.shape)
+    # num_rows = 11
+    # fig = plt.figure(figsize=(num_cols,num_rows))
+    # i = 0
+    # for t in tensor:
+    #     ax1 = fig.add_subplot(num_rows,num_cols,i+1)
+    #     pilTrans = transforms.ToPILImage()
+    #     pilImg = pilTrans(t)
+    #     ax1.imshow(pilImg, interpolation='none')
+    #     #print(tensor[i])
+    #     ax1.axis('off')
+    #     ax1.set_xticklabels([])
+    #     ax1.set_yticklabels([])
+    #     i+=1
 
 best_prec1 = 0.
 F1 = 0.
@@ -184,9 +184,10 @@ for epoch in range(0, 1):#range(args.start_epoch, args.epochs):
     i = 0
     for m in model.modules():
         if isinstance(m, nn.Conv2d):
-            if i == 0:
-                plot_kernels(m.weight.data.clone().cpu())
-                plt.savefig('result.png')
+            plot_kernels(m.weight.data.clone().cpu())
+            
+            #    plt.savefig('result.png')
+            
 
     prec1, f1 = test()
     is_best = prec1 > best_prec1
