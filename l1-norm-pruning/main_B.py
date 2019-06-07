@@ -168,9 +168,9 @@ for epoch in range(0, 1):#range(args.start_epoch, args.epochs):
     train(epoch)
 
     # Plot 
-    for m in model.modules():
-        if isinstance(m, nn.Conv2d):
-            plot_weights(m.weights.data)
+    for k, v in model.state_dict().iteritems():
+        print("Layer {}".format(k))
+        print(v)
 
     prec1, f1 = test()
     is_best = prec1 > best_prec1
