@@ -3,7 +3,6 @@ import argparse
 import numpy as np
 import os
 import shutil
-%matplot inline
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
