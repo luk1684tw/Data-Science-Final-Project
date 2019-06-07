@@ -10,7 +10,6 @@ import torch.optim as optim
 from torchvision import datasets, transforms
 from torch.autograd import Variable
 
-%matplotlib inline
 
 
 # New Import
@@ -22,27 +21,27 @@ import models
 from compute_flops import print_model_param_flops
 from matplotlib import pyplot as plt
 
-def plot_kernels(tensor, num_cols=6):
-    # if not tensor.ndim==4:
-    #     raise Exception("assumes a 4D tensor")
-    # if not tensor.shape[-1]==3:
-    #     raise Exception("last dim needs to be 3 to plot")
-    print(tensor.shape)
-    tn = tensor.view(1, tensor.shape[0]*tensor.shape[1]*tensor.shape[2]*tensor.shape[3]).numpy()
-    plt.hist(tn)
-    plt.show()
-    # num_kernels = tensor.shape[0]
-    # num_rows = 1+ num_kernels // num_cols
-    # fig = plt.figure(figsize=(num_cols,num_rows))
-    # for i in range(tensor.shape[0]):
-    #     ax1 = fig.add_subplot(num_rows,num_cols,i+1)
-    #     ax1.imshow(tensor[i])
-    #     ax1.axis('off')
-    #     ax1.set_xticklabels([])
-    #     ax1.set_yticklabels([])
+# def plot_kernels(tensor, num_cols=6):
+#     # if not tensor.ndim==4:
+#     #     raise Exception("assumes a 4D tensor")
+#     # if not tensor.shape[-1]==3:
+#     #     raise Exception("last dim needs to be 3 to plot")
+#     print(tensor.shape)
+#     tn = tensor.view(1, tensor.shape[0]*tensor.shape[1]*tensor.shape[2]*tensor.shape[3]).numpy()
+#     plt.hist(tn)
+#     plt.show()
+#     # num_kernels = tensor.shape[0]
+#     # num_rows = 1+ num_kernels // num_cols
+#     # fig = plt.figure(figsize=(num_cols,num_rows))
+#     # for i in range(tensor.shape[0]):
+#     #     ax1 = fig.add_subplot(num_rows,num_cols,i+1)
+#     #     ax1.imshow(tensor[i])
+#     #     ax1.axis('off')
+#     #     ax1.set_xticklabels([])
+#     #     ax1.set_yticklabels([])
 
-    # plt.subplots_adjust(wspace=0.1, hspace=0.1)
-    # plt.show()
+#     # plt.subplots_adjust(wspace=0.1, hspace=0.1)
+#     # plt.show()
 
 modelRoot = '/content/Drive/My Drive/Colab Notebooks/models/pruned'
 datasetRoot = '/content/Drive/My Drive/Colab Notebooks'
@@ -83,8 +82,7 @@ parser.add_argument('--depth', default=16, type=int,
                     help='depth of the neural network')
 parser.add_argument('--dist', default=0, type=str,
                     help='distribution of dataset')            
-parser.add_argument('--plot', default=False, type=bool,
-                    help='plot or not')          
+        
 
 args = parser.parse_args()
 args.cuda = not args.no_cuda and torch.cuda.is_available()
@@ -107,14 +105,12 @@ if args.scratch:
     checkpoint = torch.load(modelPath)
     model = models.__dict__[args.arch](dataset=args.dataset, depth=args.depth, cfg=checkpoint['cfg'])
 
-    if args.plot:
-        model.load_state_dict(checkpoint['state_dict'])
 
- # Plot 
-for m in model.modules():
-    if isinstance(m, nn.Conv2d):
-        plot_kernels(m.weight.data.cpu())
-        #plt.savefig('result.png')
+#  # Plot 
+# for m in model.modules():
+#     if isinstance(m, nn.Conv2d):
+#         plot_kernels(m.weight.data.cpu())
+#         #plt.savefig('result.png')
 model_ref = models.__dict__[args.arch](dataset=args.dataset, depth=args.depth)
 
 flops_std = print_model_param_flops(model_ref, 32)
@@ -194,7 +190,7 @@ def save_checkpoint(state, is_best, filepath):
 
 best_prec1 = 0.
 F1 = 0.
-for epoch in range(0, 1):#range(args.start_epoch, args.epochs):
+for epoch in range(args.start_epoch, args.epochs):
     if epoch in [int(args.epochs*0.5), int(args.epochs*0.75)]:
         for param_group in optimizer.param_groups:
             param_group['lr'] *= 0.1
