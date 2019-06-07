@@ -161,15 +161,16 @@ def plot_kernels(tensor, num_cols=6):
     fig = plt.figure(figsize=(num_cols,num_rows))
     i = 0
     for t in tensor:
-      ax1 = fig.add_subplot(num_rows,num_cols,i+1)
-      pilTrans = transforms.ToPILImage()
-      pilImg = pilTrans(t)
-      ax1.imshow(pilImg, interpolation='none')
-      #print(tensor[i])
-      ax1.axis('off')
-      ax1.set_xticklabels([])
-      ax1.set_yticklabels([])
-      i+=1
+        tmp= i+1 if i<66 else i
+        ax1 = fig.add_subplot(num_rows,num_cols,i+1)
+        pilTrans = transforms.ToPILImage()
+        pilImg = pilTrans(t)
+        ax1.imshow(pilImg, interpolation='none')
+        #print(tensor[i])
+        ax1.axis('off')
+        ax1.set_xticklabels([])
+        ax1.set_yticklabels([])
+        i+=1
 
 best_prec1 = 0.
 F1 = 0.
