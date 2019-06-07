@@ -162,7 +162,7 @@ def plot_kernels(tensor, num_cols=6):
     i = 0
     for t in tensor:
         tmp= i+1 if i<66 else i
-        ax1 = fig.add_subplot(num_rows,num_cols,i+1)
+        ax1 = fig.add_subplot(num_rows,num_cols,tmp)
         pilTrans = transforms.ToPILImage()
         pilImg = pilTrans(t)
         ax1.imshow(pilImg, interpolation='none')
