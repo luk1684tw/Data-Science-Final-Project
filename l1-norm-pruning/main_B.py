@@ -165,7 +165,7 @@ def plot_kernels(tensor, num_cols=6):
       pilTrans = transforms.ToPILImage()
       pilImg = pilTrans(t)
       ax1.imshow(pilImg, interpolation='none')
-      print(tensor[i])
+      #print(tensor[i])
       ax1.axis('off')
       ax1.set_xticklabels([])
       ax1.set_yticklabels([])
