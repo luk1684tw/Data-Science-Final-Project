@@ -4,6 +4,7 @@ import numpy as np
 import os
 import shutil
 
+import matplotlib.pyplot as plt
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -124,6 +125,14 @@ def test():
     
     return correct.item() / float(len(test_loader.dataset))
 
+def plot_kernels(tensor, num_cols=6):
+    print(tensor.shape)
+    tn = tensor.view(1, tensor.shape[0]*tensor.shape[1]*tensor.shape[2]*tensor.shape[3]).numpy()
+    # print (tn)
+
+    return tn[0]
+
+
 def save_checkpoint(state, is_best, filepath, dist):
     torch.save(state, os.path.join(filepath, f'checkpointDist{dist}.pth.tar'))
     if is_best:
@@ -156,6 +165,20 @@ for dist in args.dist:
             for param_group in optimizer.param_groups:
                 param_group['lr'] *= 0.1
         train(epoch)
+        print ('[INFO] Start printing weight distribution of Conv2D layers...')
+        plt.figure()
+        fig, ax = plt.subplot(3, 5, tight_layout=True)
+        
+        weightInfo = list()
+        for m in model.modules():
+            if isinstance(m, nn.Conv2d):
+                weightInfo.append(plot_kernels(m.weight.data.cpu()))
+
+        for idx, weight in enumerate(weightInfo):
+            ax[idx].hist(weight, )
+        plt.show()
+        print ('[INFO] End of printing weight distribution of Conv2D layers')
+
         prec1 = test()
         is_best = prec1 > best_prec1
         best_prec1 = max(prec1, best_prec1)
