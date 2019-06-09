@@ -167,7 +167,7 @@ for dist in args.dist:
         train(epoch)
         print ('[INFO] Start printing weight distribution of Conv2D layers...')
         plt.figure()
-        fig, ax = plt.subplot(3, 5, tight_layout=True, sharey=True,)
+        fig, ax = plt.subplots(3, 5, tight_layout=True, sharey=True,)
         
         weightInfo = list()
         for m in model.modules():
