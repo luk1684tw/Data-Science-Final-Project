@@ -5,6 +5,7 @@ import os
 import shutil
 
 import matplotlib.pyplot as plt
+import matplotlib
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
