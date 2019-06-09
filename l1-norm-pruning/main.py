@@ -4,6 +4,8 @@ import numpy as np
 import os
 import shutil
 
+import matplotlib.pyplot as plt
+#import matplotlib
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -17,6 +19,17 @@ sys.path.insert(0, '..')
 from datasets import GenerateCifar10Dataset as get
 root = '/content/Drive/My Drive/Colab Notebooks'
 
+import matplotlib
+gui_env = ['TKAgg','GTKAgg','Qt4Agg','WXAgg']
+for gui in gui_env:
+    try:
+        print "testing", gui
+        matplotlib.use(gui,warn=False, force=True)
+        from matplotlib import pyplot as plt
+        break
+    except:
+        continue
+print "Using:",matplotlib.get_backend()
 # Training settings
 parser = argparse.ArgumentParser(description='PyTorch Slimming CIFAR training')
 parser.add_argument('--dataset', type=str, default='cifar100',
@@ -156,6 +169,23 @@ for dist in args.dist:
             for param_group in optimizer.param_groups:
                 param_group['lr'] *= 0.1
         train(epoch)
+
+        print ('[INFO] Start printing weight distribution of Conv2D layers...')
+        plt.figure()
+        fig, ax = plt.subplots(3, 5, tight_layout=True, sharey=True,)
+        
+        weightInfo = list()
+        for m in model.modules():
+            if isinstance(m, nn.Conv2d):
+                weightInfo.append(plot_kernels(m.weight.data.cpu()))
+        ax = ax.flatten()
+        for idx, weight in enumerate(weightInfo):
+            print(f'[INFO] Setting up NO.{idx} layer...')
+            ax[idx].hist(weight)
+        plt.show()
+        print ('[INFO] End of printing weight distribution of Conv2D layers')
+
+
         prec1 = test()
         is_best = prec1 > best_prec1
         best_prec1 = max(prec1, best_prec1)
