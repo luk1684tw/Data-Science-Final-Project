@@ -125,6 +125,10 @@ def test():
         100. * correct / len(test_loader.dataset), F1))
     
     return correct.item() / float(len(test_loader.dataset))
+<<<<<<< HEAD
+=======
+
+>>>>>>> 44d4a3480426a259fcf7c8be8a1c7977fad76dcd
     
 def save_checkpoint(state, is_best, filepath, dist):
     torch.save(state, os.path.join(filepath, f'checkpointDist{dist}.pth.tar'))
@@ -158,21 +162,6 @@ for dist in args.dist:
             for param_group in optimizer.param_groups:
                 param_group['lr'] *= 0.1
         train(epoch)
-
-        print ('[INFO] Start printing weight distribution of Conv2D layers...')
-        plt.figure()
-        fig, ax = plt.subplots(3, 5, tight_layout=True, sharey=True,)
-        
-        weightInfo = list()
-        for m in model.modules():
-            if isinstance(m, nn.Conv2d):
-                weightInfo.append(plot_kernels(m.weight.data.cpu()))
-        ax = ax.flatten()
-        for idx, weight in enumerate(weightInfo):
-            print(f'[INFO] Setting up NO.{idx} layer...')
-            ax[idx].hist(weight)
-        plt.show()
-        print ('[INFO] End of printing weight distribution of Conv2D layers')
 
 
         prec1 = test()
