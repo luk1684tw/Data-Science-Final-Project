@@ -125,13 +125,6 @@ def test():
         100. * correct / len(test_loader.dataset), F1))
     
     return correct.item() / float(len(test_loader.dataset))
-
-def plot_kernels(tensor, num_cols=6):
-    print(tensor.shape)
-    tn = tensor.view(1, tensor.shape[0]*tensor.shape[1]*tensor.shape[2]*tensor.shape[3]).numpy()
-    # print (tn)
-
-    return tn[0]
     
 def save_checkpoint(state, is_best, filepath, dist):
     torch.save(state, os.path.join(filepath, f'checkpointDist{dist}.pth.tar'))

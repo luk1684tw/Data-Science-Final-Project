@@ -7,4 +7,5 @@ Dist C100: [100, 100, 100, 100, 100, 100, 100, 1, 100, 100], Accuracy: 8936/1000
 Dist A200: [1, 1, 1, 200, 1, 1, 1, 1, 1, 1], Accuracy: 8026/10000 (80.00%), F1: 0.83, url: https://drive.google.com/open?id=1WwyELr9QRUtk9gkl_sbPV3eLSAbapSVd
 Dist B200: [1, 1, 1, 200, 200, 1, 200, 200, 1, 1], Accuracy: 7543/10000 (75.00%), F1: 0.70, url: https://drive.google.com/open?id=1-9bC8zfI90-s0iDphte1-6nuoYAoSpBA
 Dist C200: [200, 200, 200, 200, 200, 1, 200, 200, 200, 200], Accuracy: 8481/10000 (84.00%), F1: 0.82
+Dist A500: [1, 1, 1, 1, 1, 1, 500, 1, 1, 1], Accuracy: 6135/10000 (61.00%), F1: 0.50, https://drive.google.com/open?id=1Dc3OSwoeF7ZqptCYGXX6HgMDHJH3qDmG
 , url: https://drive.google.com/open?id=1-B_NWObjdEIfiX0o6g3kNIdxu8orJXmG
