@@ -3,13 +3,14 @@ import argparse
 import numpy as np
 import os
 import shutil
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from torchvision import datasets, transforms
 from torch.autograd import Variable
+
+
 
 # New Import
 import sys
@@ -18,6 +19,30 @@ from datasets import GenerateCifar10Dataset as get
 from sklearn.metrics import f1_score
 import models
 from compute_flops import print_model_param_flops
+from matplotlib import pyplot as plt
+
+# def plot_kernels(tensor, num_cols=6):
+#     # if not tensor.ndim==4:
+#     #     raise Exception("assumes a 4D tensor")
+#     # if not tensor.shape[-1]==3:
+#     #     raise Exception("last dim needs to be 3 to plot")
+#     print(tensor.shape)
+#     tn = tensor.view(1, tensor.shape[0]*tensor.shape[1]*tensor.shape[2]*tensor.shape[3]).numpy()
+#     plt.hist(tn)
+#     plt.show()
+#     # num_kernels = tensor.shape[0]
+#     # num_rows = 1+ num_kernels // num_cols
+#     # fig = plt.figure(figsize=(num_cols,num_rows))
+#     # for i in range(tensor.shape[0]):
+#     #     ax1 = fig.add_subplot(num_rows,num_cols,i+1)
+#     #     ax1.imshow(tensor[i])
+#     #     ax1.axis('off')
+#     #     ax1.set_xticklabels([])
+#     #     ax1.set_yticklabels([])
+
+#     # plt.subplots_adjust(wspace=0.1, hspace=0.1)
+#     # plt.show()
+
 modelRoot = '/content/Drive/My Drive/Colab Notebooks/models/pruned'
 datasetRoot = '/content/Drive/My Drive/Colab Notebooks'
 
@@ -56,7 +81,8 @@ parser.add_argument('--arch', default='vgg', type=str,
 parser.add_argument('--depth', default=16, type=int,
                     help='depth of the neural network')
 parser.add_argument('--dist', default=0, type=str,
-                    help='distribution of dataset')                     
+                    help='distribution of dataset')            
+        
 
 args = parser.parse_args()
 args.cuda = not args.no_cuda and torch.cuda.is_available()
@@ -79,6 +105,12 @@ if args.scratch:
     checkpoint = torch.load(modelPath)
     model = models.__dict__[args.arch](dataset=args.dataset, depth=args.depth, cfg=checkpoint['cfg'])
 
+
+#  # Plot 
+# for m in model.modules():
+#     if isinstance(m, nn.Conv2d):
+#         plot_kernels(m.weight.data.cpu())
+#         #plt.savefig('result.png')
 model_ref = models.__dict__[args.arch](dataset=args.dataset, depth=args.depth)
 
 flops_std = print_model_param_flops(model_ref, 32)
@@ -155,6 +187,7 @@ def save_checkpoint(state, is_best, filepath):
         shutil.copyfile(os.path.join(filepath, f'scratchB{args.dist}.pth.tar'), os.path.join(filepath, f'model{args.dist}_best.pth.tar'))
 
 
+
 best_prec1 = 0.
 F1 = 0.
 for epoch in range(args.start_epoch, args.epochs):
@@ -162,6 +195,8 @@ for epoch in range(args.start_epoch, args.epochs):
         for param_group in optimizer.param_groups:
             param_group['lr'] *= 0.1
     train(epoch)
+            
+
     prec1, f1 = test()
     is_best = prec1 > best_prec1
     best_prec1 = max(prec1, best_prec1)
