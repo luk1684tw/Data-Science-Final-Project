@@ -100,6 +100,7 @@ for m in model.modules():
         weight_copy = m.weight.data.abs().clone()
         weight_copy = weight_copy.cpu().numpy()
         L1_norm = np.sum(weight_copy, axis=(1, 2, 3))
+        print('L1_norm', L1_norm)
         arg_max = np.argsort(L1_norm)
         arg_max_rev = arg_max[::-1][:cfg[layer_id]]
         assert arg_max_rev.size == cfg[layer_id], "size of arg_max_rev not correct"
@@ -110,7 +111,7 @@ for m in model.modules():
     elif isinstance(m, nn.MaxPool2d):
         layer_id += 1
 
-print(cfg_mask[0])
+print(cfg_mask)
 newmodel = vgg(dataset=args.dataset, cfg=cfg)
 if args.cuda:
     newmodel.cuda()
