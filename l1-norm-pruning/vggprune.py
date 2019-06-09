@@ -100,10 +100,6 @@ for m in model.modules():
         weight_copy = m.weight.data.abs().clone()
         weight_copy = weight_copy.cpu().numpy()
         L1_norm = np.sum(weight_copy, axis=(1, 2, 3))
-<<<<<<< HEAD
-=======
-        # print('L1_norm', L1_norm)
->>>>>>> 44d4a3480426a259fcf7c8be8a1c7977fad76dcd
         arg_max = np.argsort(L1_norm)
         arg_max_rev = arg_max[::-1][:cfg[layer_id]]
         assert arg_max_rev.size == cfg[layer_id], "size of arg_max_rev not correct"
