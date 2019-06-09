@@ -65,16 +65,6 @@ if args.cuda:
 if not os.path.exists(args.save):
     os.makedirs(args.save)
 
-def confusion(prediction, truth):
-    confusion_vector = prediction / truth
-
-    true_positives = torch.sum(confusion_vector == 1).item()
-    false_positives = torch.sum(confusion_vector == float('inf')).item()
-    true_negatives = torch.sum(torch.isnan(confusion_vector)).item()
-    false_negatives = torch.sum(confusion_vector == 0).item()
-
-    return true_positives, false_positives, true_negatives, false_negatives
-
 def train(epoch):
     model.train()
     avg_loss = 0.
@@ -132,7 +122,7 @@ def save_checkpoint(state, is_best, filepath, dist):
         shutil.copyfile(os.path.join(filepath, f'checkpointDist{dist}.pth.tar'), os.path.join(filepath, f'model{dist}_best.pth.tar'))
 
 for dist in args.dist:
-    train_loader, test_loader = get(root, args.batch_size, args.test_batch_size, dist, False)
+    train_loader, test_loader = get(root, args.batch_size, args.test_batch_size, dist, True)
     model = models.__dict__[args.arch](dataset=args.dataset, depth=args.depth)
     optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay)
     model._initialize_weights()
