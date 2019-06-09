@@ -5,7 +5,7 @@ import os
 import shutil
 
 import matplotlib.pyplot as plt
-#import matplotlib
+import matplotlib
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -19,17 +19,6 @@ sys.path.insert(0, '..')
 from datasets import GenerateCifar10Dataset as get
 root = '/content/Drive/My Drive/Colab Notebooks'
 
-import matplotlib
-gui_env = ['TKAgg','GTKAgg','Qt4Agg','WXAgg']
-for gui in gui_env:
-    try:
-        print ("testing", gui)
-        matplotlib.use(gui,warn=False, force=True)
-        from matplotlib import pyplot as plt
-        break
-    except:
-        continue
-print ("Using:",matplotlib.get_backend())
 # Training settings
 parser = argparse.ArgumentParser(description='PyTorch Slimming CIFAR training')
 parser.add_argument('--dataset', type=str, default='cifar100',
@@ -137,6 +126,13 @@ def test():
     
     return correct.item() / float(len(test_loader.dataset))
 
+def plot_kernels(tensor, num_cols=6):
+    print(tensor.shape)
+    tn = tensor.view(1, tensor.shape[0]*tensor.shape[1]*tensor.shape[2]*tensor.shape[3]).numpy()
+    # print (tn)
+
+    return tn[0]
+    
 def save_checkpoint(state, is_best, filepath, dist):
     torch.save(state, os.path.join(filepath, f'checkpointDist{dist}.pth.tar'))
     if is_best:
