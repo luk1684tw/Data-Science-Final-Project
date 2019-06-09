@@ -167,7 +167,7 @@ for dist in args.dist:
         train(epoch)
         print ('[INFO] Start printing weight distribution of Conv2D layers...')
         plt.figure()
-        fig, ax = plt.subplot(3, 5, tight_layout=True)
+        fig, ax = plt.subplot(3, 5, tight_layout=True, sharey=True,)
         
         weightInfo = list()
         for m in model.modules():
@@ -175,8 +175,8 @@ for dist in args.dist:
                 weightInfo.append(plot_kernels(m.weight.data.cpu()))
 
         for idx, weight in enumerate(weightInfo):
-            ax[idx].hist(weight, )
-        plt.show()
+            ax[idx].hist(weight)
+        # plt.show()
         print ('[INFO] End of printing weight distribution of Conv2D layers')
 
         prec1 = test()
