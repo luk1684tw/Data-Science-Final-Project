@@ -177,7 +177,7 @@ for dist in args.dist:
         for idx, weight in enumerate(weightInfo):
             print(f'[INFO] Setting up NO.{idx} layer...')
             ax[idx].hist(weight)
-        # plt.show()
+        plt.show()
         print ('[INFO] End of printing weight distribution of Conv2D layers')
 
         prec1 = test()
