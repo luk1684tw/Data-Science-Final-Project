@@ -110,7 +110,7 @@ for m in model.modules():
     elif isinstance(m, nn.MaxPool2d):
         layer_id += 1
 
-
+print(cfg_mask[0])
 newmodel = vgg(dataset=args.dataset, cfg=cfg)
 if args.cuda:
     newmodel.cuda()
