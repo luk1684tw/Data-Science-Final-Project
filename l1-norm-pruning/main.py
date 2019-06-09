@@ -125,10 +125,6 @@ def test():
         100. * correct / len(test_loader.dataset), F1))
     
     return correct.item() / float(len(test_loader.dataset))
-<<<<<<< HEAD
-=======
-
->>>>>>> 44d4a3480426a259fcf7c8be8a1c7977fad76dcd
     
 def save_checkpoint(state, is_best, filepath, dist):
     torch.save(state, os.path.join(filepath, f'checkpointDist{dist}.pth.tar'))
