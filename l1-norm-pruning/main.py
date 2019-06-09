@@ -173,8 +173,9 @@ for dist in args.dist:
         for m in model.modules():
             if isinstance(m, nn.Conv2d):
                 weightInfo.append(plot_kernels(m.weight.data.cpu()))
-
+        ax = ax.flatten()
         for idx, weight in enumerate(weightInfo):
+            print(f'[INFO] Setting up NO.{idx} layer...')
             ax[idx].hist(weight)
         # plt.show()
         print ('[INFO] End of printing weight distribution of Conv2D layers')
