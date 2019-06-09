@@ -8,3 +8,5 @@ Dist A200: [1, 1, 1, 200, 1, 1, 1, 1, 1, 1], Accuracy: 8026/10000 (80.00%), F1: 
 Dist B200: [1, 1, 1, 200, 200, 1, 200, 200, 1, 1], Accuracy: 7543/10000 (75.00%), F1: 0.70, url: https://drive.google.com/open?id=1-9bC8zfI90-s0iDphte1-6nuoYAoSpBA
 Dist C200: [200, 200, 200, 200, 200, 1, 200, 200, 200, 200], Accuracy: 8481/10000 (84.00%), F1: 0.82
 , url: https://drive.google.com/open?id=1-B_NWObjdEIfiX0o6g3kNIdxu8orJXmG
+Dist B500: [1, 500, 1, 500, 1, 500, 1, 500, 1, 1], Accuracy: 5083/10000 (50.00%), F1: 0.37, url: https://drive.google.com/open?id=1WwyELr9QRUtk9gkl_sbPV3eLSAbapSVd
+Dist C500: [500, 500, 500, 500, 500, 500, 500, 1, 500, 500], Accuracy: 8423/10000 (84.00%), F1: 0.73, url: https://drive.google.com/open?id=1WwyELr9QRUtk9gkl_sbPV3eLSAbapSVd
