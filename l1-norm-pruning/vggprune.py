@@ -159,8 +159,8 @@ for [m0, m1] in zip(model.modules(), newmodel.modules()):
         m1.running_var = m0.running_var.clone()
 
 print (args.save)
-# torch.save({'cfg': cfg, 'state_dict': newmodel.state_dict()}, os.path.join(args.save, f'pruned{args.dist}.pth.tar'))
-torch.save(newmodel, os.path.join(args.save, f'pruned{args.dist}.pth.tar'))
+torch.save({'cfg': cfg, 'state_dict': newmodel.state_dict()}, os.path.join(args.save, f'pruned{args.dist}.pth.tar'))
+# torch.save(newmodel, os.path.join(args.save, f'pruned{args.dist}.pth.tar'))
 print(newmodel)
 model = newmodel
 acc = test(model)
