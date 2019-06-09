@@ -4,7 +4,7 @@ Dist C75: [75, 75, 75, 75, 1, 75, 75, 75, 75, 75], Accuracy: 8784/10000 (87.00%)
 Dist A100: [100, 1, 1, 1, 1, 1, 1, 1, 1, 1], Accuracy: 8497/10000 (84.00%), F1: 0.91, url: https://drive.google.com/open?id=1qmxX4gcHKFZKjbNEaesl6FwipRSOfUG7
 Dist B100: [100, 1, 1, 100, 1, 1, 100, 1, 1, 100], , Accuracy: 7996/10000 (79.00%), F1: 0.77, url: https://drive.google.com/open?id=1xJ3F97H0P1MhukYjFlx0VSqMhlalQ3ot
 Dist C100: [100, 100, 100, 100, 100, 100, 100, 1, 100, 100], Accuracy: 8936/10000 (89.00%), F1: 0.92, url: https://drive.google.com/open?id=17zqzazEAv3bfw5Cn8dh0mI8_qquDpNjX
-Dist A200: [1, 1, 1, 200, 1, 1, 1, 1, 1, 1], Accuracy: 8026/10000 (80.00%), F1: 0.83, url: https://drive.google.com/open?id=1WwyELr9QRUtk9gkl_sbPV3eLSAbapSVd
+Dist A200: [1, 1, 1, 200, 1, 1, 1, 1, 1, 1], Accuracy: 8029/10000 (80.00%), F1: 0.87, url: https://drive.google.com/open?id=1WwyELr9QRUtk9gkl_sbPV3eLSAbapSVd
 Dist B200: [1, 1, 1, 200, 200, 1, 200, 200, 1, 1], Accuracy: 7543/10000 (75.00%), F1: 0.70, url: https://drive.google.com/open?id=1-9bC8zfI90-s0iDphte1-6nuoYAoSpBA
 Dist C200: [200, 200, 200, 200, 200, 1, 200, 200, 200, 200], Accuracy: 8481/10000 (84.00%), F1: 0.82
 Dist A500: [1, 1, 1, 1, 1, 1, 500, 1, 1, 1], Accuracy: 6135/10000 (61.00%), F1: 0.50, https://drive.google.com/open?id=1Dc3OSwoeF7ZqptCYGXX6HgMDHJH3qDmG
