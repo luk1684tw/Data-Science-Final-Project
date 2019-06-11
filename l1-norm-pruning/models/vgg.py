@@ -59,6 +59,7 @@ class vgg(nn.Module):
         return nn.Sequential(*layers)
 
     def forward(self, x):
+        print ('[INFO] Shape of input is', x.size())
         x = self.feature(x)
         x = nn.AvgPool2d(2)(x)
         print ('[INFO] Shape of X is', x.size())
