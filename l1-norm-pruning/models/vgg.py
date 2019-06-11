@@ -29,7 +29,7 @@ class vgg(nn.Module):
         elif dataset == 'cifar100':
             num_classes = 100
         self.classifier = nn.Sequential(
-              nn.Linear(cfg[-1], 2048),
+              nn.Linear(16384, 2048),
               nn.BatchNorm1d(2048),
               nn.ReLU(inplace=True),
               nn.Linear(2048, 1024),
