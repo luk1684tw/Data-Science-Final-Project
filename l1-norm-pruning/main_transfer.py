@@ -125,7 +125,7 @@ print('Old model features: ', model.classifier[3].out_features)
 for param in model.features.parameters():
     param.require_grad = False
 
-class_names = ['NORMAL', 'PNEUMONIA']
+# class_names = ['NORMAL', 'PNEUMONIA']
 # Newly created modules have require_grad=True by default
 num_features = model.classifier[3].in_features
 features = list(model.classifier.children())[:-1] # Remove last layer
