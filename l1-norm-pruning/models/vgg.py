@@ -30,10 +30,10 @@ class vgg(nn.Module):
             num_classes = 100
         self.classifier = nn.Sequential(
               nn.Linear(16384, 2048),
-              nn.BatchNorm1d(2048),
+              nn.BatchNorm1d(32*2048),
               nn.ReLU(inplace=True),
               nn.Linear(2048, 1024),
-              nn.BatchNorm1d(1024),
+              nn.BatchNorm1d(32*1024),
               nn.ReLU(inplace=True),
               nn.Linear(1024, num_classes)
             )
