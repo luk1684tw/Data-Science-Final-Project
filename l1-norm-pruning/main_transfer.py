@@ -13,7 +13,7 @@ from torch.autograd import Variable
 # New Import
 import sys
 sys.path.insert(0, '..')
-from TransferDataset import GenerateOCTDataset as get
+from TransferDataset import GenerateOCTDatasets as get
 from sklearn.metrics import f1_score
 import models
 from compute_flops import print_model_param_flops
