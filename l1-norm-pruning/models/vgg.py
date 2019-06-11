@@ -55,7 +55,7 @@ class vgg(nn.Module):
     def forward(self, x):
         x = self.feature(x)
         x = nn.AvgPool2d(2)(x)
-        x = x.view(x.size(0), -1)
+        x = x.view(256, -1)
         print ('[INFO] Shape of X is', x.size())
         y = self.classifier(x)
         return y
