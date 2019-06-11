@@ -32,7 +32,10 @@ class vgg(nn.Module):
               nn.Linear(cfg[-1], 4096),
               nn.BatchNorm1d(4096),
               nn.ReLU(inplace=True),
-              nn.Linear(4096, num_classes)
+              nn.Linear(4096, 1024),
+              nn.BatchNorm1d(1024),
+              nn.ReLU(inplace=True),
+              nn.Linear(1024, num_classes)
             )
         if init_weights:
             self._initialize_weights()
