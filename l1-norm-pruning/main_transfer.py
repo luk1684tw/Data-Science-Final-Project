@@ -120,7 +120,7 @@ features.extend([nn.Linear(num_features, 4)]) # Add our layer with 4 outputs
 model.classifier = nn.Sequential(*features) # Replace the model classifier
 model = model.cuda()
 
-optimizer = optim.SGD(model.fc.parameters(), lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay)
+optimizer = optim.SGD(model.classifier.parameters(), lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay)
 print('Get the new trasfer learning model', model) 
 
 
