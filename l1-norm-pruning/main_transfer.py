@@ -30,7 +30,7 @@ parser.add_argument('--scratch', default='', type=str, metavar='PATH',
                     help='path to the pruned model')
 parser.add_argument('--batch-size', type=int, default=64, metavar='N',
                     help='input batch size for training (default: 64)')
-parser.add_argument('--test-batch-size', type=int, default=256, metavar='N',
+parser.add_argument('--test-batch-size', type=int, default=64, metavar='N',
                     help='input batch size for testing (default: 256)')
 parser.add_argument('--epochs', type=int, default=120, metavar='N',
                     help='number of epochs to train (default: 160)')
@@ -83,27 +83,6 @@ if args.scratch:
     checkpoint = torch.load(modelPath)
     model = models.__dict__[args.arch](dataset=args.dataset, depth=args.depth, cfg=checkpoint['cfg'])
 
-
-
-# if args.resume:
-#     if os.path.isfile(args.resume):
-#         print("=> loading checkpoint '{}'".format(args.resume))
-#         checkpoint = torch.load(args.resume)
-#         args.start_epoch = checkpoint['epoch']
-#         best_prec1 = checkpoint['best_prec1']
-#         model.load_state_dict(checkpoint['state_dict'])
-#         optimizer.load_state_dict(checkpoint['optimizer'])
-#         print("=> loaded checkpoint '{}' (epoch {}) Prec1: {:f}"
-#               .format(args.resume, checkpoint['epoch'], best_prec1))
-#     else:
-#         print("=> no checkpoint found at '{}'".format(args.resume))
-
-# self.classifier = nn.Sequential(
-#               nn.Linear(cfg[-1], 512),
-#               nn.BatchNorm1d(512),
-#               nn.ReLU(inplace=True),
-#               nn.Linear(512, num_classes)
-#             )
 print('Old model features: ', model.classifier[-1].out_features) 
 # Freeze training for all layers
 for param in model.feature.parameters():
@@ -169,9 +148,9 @@ def test():
     return correct.data.item() / float(len(test_loader.dataset)), F1
 
 def save_checkpoint(state, is_best, filepath):
-    torch.save(state, os.path.join(filepath, f'scratchB{args.dist}.pth.tar'))
+    torch.save(state, os.path.join(filepath, f'{modelFolder}{args.dist}.pth.tar'))
     if is_best:
-        shutil.copyfile(os.path.join(filepath, f'scratchB{args.dist}.pth.tar'), os.path.join(filepath, f'model{args.dist}_best.pth.tar'))
+        shutil.copyfile(os.path.join(filepath, f'{modelFolder}{args.dist}.pth.tar'), os.path.join(filepath, f'{modelFolder}{args.dist}_best.pth.tar'))
 
 
 
@@ -196,5 +175,5 @@ for epoch in range(args.start_epoch, args.epochs):
         'optimizer': optimizer.state_dict(),
         'cfg': model.cfg
     }, is_best, filepath=args.save)
-with open(os.path.join(args.save, f'bestAccu{args.dist}.txt'), 'w') as file:
+with open(os.path.join(args.save, f'{modelFolder}{args.dist}.txt'), 'w') as file:
     file.write(f'Accu: {best_prec1}, F1: {F1}\n')
