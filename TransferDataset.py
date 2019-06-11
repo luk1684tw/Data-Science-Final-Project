@@ -16,7 +16,7 @@ distribution C:[x, x, x, x, x, x, x, x, x, y]
 def GenerateOCTDatasets(root, trainBatchSize, testBatchSize):
     print('[INFO] Start creating datasets')
     trainTransform = transforms.Compose([
-        transforms.Resize(size=(32, 32)),
+        transforms.Resize(size=(256, 256)),
         transforms.RandomHorizontalFlip(),
         transforms.ToTensor(),
         transforms.Normalize((0.4914, 0.4822, 0.4465),
@@ -24,7 +24,7 @@ def GenerateOCTDatasets(root, trainBatchSize, testBatchSize):
     ])
 
     testTransform = transforms.Compose([
-        transforms.Resize(size=(32, 32)),
+        transforms.Resize(size=(256, 256)),
         transforms.ToTensor(),
         transforms.Normalize((0.4914, 0.4822, 0.4465),
                              (0.2023, 0.1994, 0.2010))

@@ -37,8 +37,9 @@ def GenerateCifar10Dataset(root, trainBatchSize, testBatchSize, dist, test):
 
     print('[INFO] Start creating datasets')
     trainTransform = transforms.Compose([
+        transforms.Resize(256),
         transforms.Pad(4),
-        transforms.RandomCrop(32),
+        transforms.CenterCrop(256),
         transforms.RandomHorizontalFlip(),
         transforms.ToTensor(),
         transforms.Normalize((0.4914, 0.4822, 0.4465),
@@ -46,7 +47,7 @@ def GenerateCifar10Dataset(root, trainBatchSize, testBatchSize, dist, test):
     ])
 
     testTransform = transforms.Compose([
-        transforms.Resize(size=(32, 32)),
+        transforms.Resize(size=(256, 256)),
         transforms.ToTensor(),
         transforms.Normalize((0.4914, 0.4822, 0.4465),
                              (0.2023, 0.1994, 0.2010))
