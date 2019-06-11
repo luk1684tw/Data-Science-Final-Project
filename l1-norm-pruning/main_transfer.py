@@ -88,8 +88,6 @@ if args.cuda:
     model.cuda()
 
 
-optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay)
-
 if args.resume:
     if os.path.isfile(args.resume):
         print("=> loading checkpoint '{}'".format(args.resume))
@@ -120,6 +118,9 @@ num_features = model.classifier[3].in_features
 features = list(model.classifier.children())[:-1] # Remove last layer
 features.extend([nn.Linear(num_features, 4)]) # Add our layer with 4 outputs
 model.classifier = nn.Sequential(*features) # Replace the model classifier
+model = model.cuda()
+
+optimizer = optim.SGD(model.fc.parameters(), lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay)
 print('Get the new trasfer learning model', model) 
 
 
