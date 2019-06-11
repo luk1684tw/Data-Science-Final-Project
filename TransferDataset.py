@@ -31,9 +31,9 @@ def GenerateOCTDatasets(root, trainBatchSize, testBatchSize):
     ])
 
     training = torchvision.datasets.ImageFolder(os.path.join(
-        root, 'datasets/OCT2017/train'), transform=trainTransform)
+        root, 'datasets/STFDogs/train'), transform=trainTransform)
     testing = torchvision.datasets.ImageFolder(os.path.join(
-        root, 'datasets/OCT2017/test'), transform=testTransform)
+        root, 'datasets/STFDogs/test'), transform=testTransform)
 
     print('[INFO] Creating dataloader')
     trainLoader = torch.utils.data.DataLoader(
