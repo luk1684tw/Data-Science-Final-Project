@@ -1,4 +1,3 @@
-from __future__ import print_function
 import argparse
 import numpy as np
 import os
@@ -7,7 +6,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-from torchvision import datasets, transforms
 from torch.autograd import Variable
 
 
@@ -15,18 +13,18 @@ from torch.autograd import Variable
 # New Import
 import sys
 sys.path.insert(0, '..')
-from datasets import GenerateCifar10Dataset as get
+from TransferDataset import GenerateOCTDataset as get
 from sklearn.metrics import f1_score
 import models
 from compute_flops import print_model_param_flops
 from matplotlib import pyplot as plt
 
-modelRoot = '/content/Drive/My Drive/Colab Notebooks/models/pruned'
+modelRoot = '/content/Drive/My Drive/Colab Notebooks/models'
 datasetRoot = '/content/Drive/My Drive/Colab Notebooks'
 
 # Training settings
 parser = argparse.ArgumentParser(description='PyTorch Slimming CIFAR training')
-parser.add_argument('--dataset', type=str, default='cifar100',
+parser.add_argument('--dataset', type=str, default='cifar10',
                     help='training dataset (default: cifar100)')
 parser.add_argument('--scratch', default='', type=str, metavar='PATH',
                     help='path to the pruned model')
@@ -52,18 +50,20 @@ parser.add_argument('--seed', type=int, default=1, metavar='S',
                     help='random seed (default: 1)')
 parser.add_argument('--log-interval', type=int, default=100, metavar='N',
                     help='how many batches to wait before logging training status')
-parser.add_argument('--save', default='/content/Drive/My Drive/Colab Notebooks/models/scratchB', type=str, metavar='PATH',
+parser.add_argument('--save', default='/content/Drive/My Drive/Colab Notebooks/models/Transfer', type=str, metavar='PATH',
                     help='path to save prune model (default: current directory)')
 parser.add_argument('--arch', default='vgg', type=str, 
                     help='architecture to use')
 parser.add_argument('--depth', default=16, type=int,
                     help='depth of the neural network')
-parser.add_argument('--dist', default=0, type=str,
+parser.add_argument('--method', default=0, type=int,
                     help='distribution of dataset')            
         
 
 args = parser.parse_args()
 args.cuda = not args.no_cuda and torch.cuda.is_available()
+methodType = {0: "finetune", 1: "scratchB", 2: "scratchE"}
+modelFolder = methodType[args.method]
 
 torch.manual_seed(args.seed)
 if args.cuda:
@@ -73,27 +73,16 @@ if not os.path.exists(args.save):
     os.makedirs(args.save)
 
 
-train_loader, test_loader = get(datasetRoot, args.batch_size, args.test_batch_size, args.dist, True)
+train_loader, test_loader = get(datasetRoot, args.batch_size, args.test_batch_size)
 
 model = models.__dict__[args.arch](dataset=args.dataset, depth=args.depth)
 
 if args.scratch:
-    modelPath = os.path.join(modelRoot, args.scratch)
+    modelPath = os.path.join(modelRoot, modelFolder, args.scratch)
     print ('[INFO] Loading model from', modelPath)
     checkpoint = torch.load(modelPath)
     model = models.__dict__[args.arch](dataset=args.dataset, depth=args.depth, cfg=checkpoint['cfg'])
 
-
-#  # Plot 
-# for m in model.modules():
-#     if isinstance(m, nn.Conv2d):
-#         plot_kernels(m.weight.data.cpu())
-#         #plt.savefig('result.png')
-model_ref = models.__dict__[args.arch](dataset=args.dataset, depth=args.depth)
-
-flops_std = print_model_param_flops(model_ref, 32)
-flops_small = print_model_param_flops(model, 32)
-args.epochs = int(120 * (flops_std / flops_small))
 
 if args.cuda:
     model.cuda()
