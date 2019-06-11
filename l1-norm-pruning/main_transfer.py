@@ -107,14 +107,15 @@ if args.resume:
 #               nn.ReLU(inplace=True),
 #               nn.Linear(512, num_classes)
 #             )
-print('Old model features: ', model.classifier[3].out_features) 
+print('Old model features: ', model.classifier[-1].out_features) 
 # Freeze training for all layers
 for param in model.feature.parameters():
     param.require_grad = False
 
 # class_names = ['NORMAL', 'PNEUMONIA']
 # Newly created modules have require_grad=True by default
-num_features = model.classifier[3].in_features
+num_features = model.classifier[-1].in_features
+print ('[INFO] In Features', num_features)
 features = list(model.classifier.children())[:-1] # Remove last layer
 features.extend([nn.Linear(num_features, 4)]) # Add our layer with 4 outputs
 model.classifier = nn.Sequential(*features) # Replace the model classifier
