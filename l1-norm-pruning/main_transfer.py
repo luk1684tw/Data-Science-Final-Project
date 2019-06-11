@@ -111,7 +111,7 @@ if args.resume:
 #             )
 print('Old model features: ', model.classifier[3].out_features) 
 # Freeze training for all layers
-for param in model.features.parameters():
+for param in model.feature.parameters():
     param.require_grad = False
 
 # class_names = ['NORMAL', 'PNEUMONIA']
