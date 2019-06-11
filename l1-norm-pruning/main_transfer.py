@@ -84,22 +84,19 @@ if args.scratch:
     model = models.__dict__[args.arch](dataset=args.dataset, depth=args.depth, cfg=checkpoint['cfg'])
 
 
-if args.cuda:
-    model.cuda()
 
-
-if args.resume:
-    if os.path.isfile(args.resume):
-        print("=> loading checkpoint '{}'".format(args.resume))
-        checkpoint = torch.load(args.resume)
-        args.start_epoch = checkpoint['epoch']
-        best_prec1 = checkpoint['best_prec1']
-        model.load_state_dict(checkpoint['state_dict'])
-        optimizer.load_state_dict(checkpoint['optimizer'])
-        print("=> loaded checkpoint '{}' (epoch {}) Prec1: {:f}"
-              .format(args.resume, checkpoint['epoch'], best_prec1))
-    else:
-        print("=> no checkpoint found at '{}'".format(args.resume))
+# if args.resume:
+#     if os.path.isfile(args.resume):
+#         print("=> loading checkpoint '{}'".format(args.resume))
+#         checkpoint = torch.load(args.resume)
+#         args.start_epoch = checkpoint['epoch']
+#         best_prec1 = checkpoint['best_prec1']
+#         model.load_state_dict(checkpoint['state_dict'])
+#         optimizer.load_state_dict(checkpoint['optimizer'])
+#         print("=> loaded checkpoint '{}' (epoch {}) Prec1: {:f}"
+#               .format(args.resume, checkpoint['epoch'], best_prec1))
+#     else:
+#         print("=> no checkpoint found at '{}'".format(args.resume))
 
 # self.classifier = nn.Sequential(
 #               nn.Linear(cfg[-1], 512),
@@ -119,7 +116,7 @@ print ('[INFO] In Features', num_features)
 features = list(model.classifier.children())[:-1] # Remove last layer
 features.extend([nn.Linear(num_features, 4)]) # Add our layer with 4 outputs
 model.classifier = nn.Sequential(*features) # Replace the model classifier
-model = model.cuda()
+model.cuda()
 
 optimizer = optim.SGD(model.classifier.parameters(), lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay)
 print('Get the new trasfer learning model', model) 
