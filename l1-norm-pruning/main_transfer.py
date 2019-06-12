@@ -28,21 +28,12 @@ parser.add_argument('--dataset', type=str, default='cifar10',
                     help='training dataset (default: cifar100)')
 parser.add_argument('--scratch', default='', type=str, metavar='PATH',
                     help='path to the pruned model')
-<<<<<<< HEAD
-parser.add_argument('--batch-size', type=int, default=64, metavar='N',
-                    help='input batch size for training (default: 64)')
-parser.add_argument('--test-batch-size', type=int, default=64, metavar='N',
-                    help='input batch size for testing (default: 256)')
-parser.add_argument('--epochs', type=int, default=120, metavar='N',
-                    help='number of epochs to train (default: 160)')
-=======
 parser.add_argument('--batch-size', type=int, default=32, metavar='N',
                     help='input batch size for training (default: 32)')
 parser.add_argument('--test-batch-size', type=int, default=32, metavar='N',
                     help='input batch size for testing (default: 32)')
 parser.add_argument('--epochs', type=int, default=40, metavar='N',
                     help='number of epochs to train (default: 40)')
->>>>>>> be4b0c80e37e83049c2bfff2e404ae4521603449
 parser.add_argument('--start-epoch', default=0, type=int, metavar='N',
                     help='manual epoch number (useful on restarts)')
 parser.add_argument('--lr', type=float, default=0.1, metavar='LR',
@@ -90,7 +81,7 @@ if args.scratch:
     modelPath = os.path.join(modelRoot, modelFolder, args.scratch)
     print ('[INFO] Loading model from', modelPath)
     checkpoint = torch.load(modelPath)
-    model = models.__dict__[args.arch](dataset=args.dataset, depth=args.depth, cfg=checkpoint['cfg'])
+    model = models.__dict__[args.arch](dataset=args.dataset, depth=args.depth, cfg=checkpoint['cfg'], transfer=True)
 
 print('Old model features: ', model.classifier[-1].out_features) 
 # Freeze training for all layers
@@ -185,10 +176,5 @@ for epoch in range(args.start_epoch, args.epochs):
         'optimizer': optimizer.state_dict(),
         'cfg': model.cfg
     }, is_best, filepath=args.save)
-<<<<<<< HEAD
 with open(os.path.join(args.save, f'{modelFolder}{args.dist}.txt'), 'w') as file:
     file.write(f'Accu: {best_prec1}, F1: {F1}\n')
-=======
-with open(os.path.join(args.save, f'bestAccu{args.dist}.txt'), 'w') as file:
-    file.write(f'Accu: {best_prec1}, F1: {F1}\n')
->>>>>>> be4b0c80e37e83049c2bfff2e404ae4521603449

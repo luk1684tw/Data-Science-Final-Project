@@ -15,7 +15,7 @@ defaultcfg = {
 }
 
 class vgg(nn.Module):
-    def __init__(self, dataset='cifar10', depth=19, init_weights=True, cfg=None):
+    def __init__(self, dataset='cifar10', depth=19, init_weights=True, cfg=None, transfer=False):
         super(vgg, self).__init__()
         if cfg is None:
             cfg = defaultcfg[depth]
@@ -28,15 +28,25 @@ class vgg(nn.Module):
             num_classes = 10
         elif dataset == 'cifar100':
             num_classes = 100
-        self.classifier = nn.Sequential(
-            nn.Linear(16384, 4096),
-            nn.BatchNorm1d(4096),
-            nn.ReLU(inplace=True),
-            nn.Linear(4096, 1024),
-            nn.BatchNorm1d(1024),
-            nn.ReLU(inplace=True),
-            nn.Linear(1024, num_classes)
-        )
+
+        if transfer:
+            self.classifier = nn.Sequential(
+                nn.Linear(16384, 4096),
+                nn.BatchNorm1d(4096),
+                nn.ReLU(inplace=True),
+                nn.Linear(4096, 1024),
+                nn.BatchNorm1d(1024),
+                nn.ReLU(inplace=True),
+                nn.Linear(1024, num_classes)
+            )
+        else:
+            self.classifier = nn.Sequential(
+              nn.Linear(cfg[-1], 512),
+              nn.BatchNorm1d(512),
+              nn.ReLU(inplace=True),
+              nn.Linear(512, num_classes)
+            )
+            
         if init_weights:
             self._initialize_weights()
 
