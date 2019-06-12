@@ -114,8 +114,9 @@ for param in model.feature.parameters():
 num_features = model.classifier[-1].in_features
 print ('[INFO] In Features', num_features)
 features = list(model.classifier.children())[:-1] # Remove last layer
-features.extend([nn.Linear(num_features, 4)]) # Add our layer with 4 outputs
+features.extend([nn.Linear(num_features, 120)]) # Add our layer with 120 outputs
 model.classifier = nn.Sequential(*features) # Replace the model classifier
+
 model.cuda()
 
 optimizer = optim.SGD(model.classifier.parameters(), lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay)
