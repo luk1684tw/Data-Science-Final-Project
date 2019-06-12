@@ -58,7 +58,8 @@ parser.add_argument('--depth', default=16, type=int,
                     help='depth of the neural network')
 parser.add_argument('--method', default=0, type=int,
                     help='distribution of dataset')            
-        
+parser.add_argument('--dist', default=0, type=str, 
+                    help='distribution of dataset')
 
 args = parser.parse_args()
 args.cuda = not args.no_cuda and torch.cuda.is_available()
