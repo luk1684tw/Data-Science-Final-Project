@@ -62,7 +62,7 @@ parser.add_argument('--method', default=0, type=int,
 
 args = parser.parse_args()
 args.cuda = not args.no_cuda and torch.cuda.is_available()
-methodType = {0: "finetune", 1: "scratchB", 2: "scratchE"}
+methodType = {0: "finetune", 1: "scratchB", 2: "scratchE", 3: "baseline"}
 modelFolder = methodType[args.method]
 
 torch.manual_seed(args.seed)
