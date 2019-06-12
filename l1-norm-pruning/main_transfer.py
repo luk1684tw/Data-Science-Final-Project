@@ -81,7 +81,7 @@ if args.scratch:
     modelPath = os.path.join(modelRoot, modelFolder, args.scratch)
     print ('[INFO] Loading model from', modelPath)
     checkpoint = torch.load(modelPath)
-    model = models.__dict__[args.arch](dataset=args.dataset, depth=args.depth, cfg=checkpoint['cfg'], transfer=True)
+    model = models.__dict__[args.arch](dataset=args.dataset, depth=args.depth, cfg=checkpoint['cfg'], transfer=True, method=args.method)
 
 print('Old model features: ', model.classifier[-1].out_features) 
 # Freeze training for all layers
