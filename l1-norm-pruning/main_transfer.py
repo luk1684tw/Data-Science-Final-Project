@@ -28,12 +28,21 @@ parser.add_argument('--dataset', type=str, default='cifar10',
                     help='training dataset (default: cifar100)')
 parser.add_argument('--scratch', default='', type=str, metavar='PATH',
                     help='path to the pruned model')
+<<<<<<< HEAD
 parser.add_argument('--batch-size', type=int, default=64, metavar='N',
                     help='input batch size for training (default: 64)')
 parser.add_argument('--test-batch-size', type=int, default=64, metavar='N',
                     help='input batch size for testing (default: 256)')
 parser.add_argument('--epochs', type=int, default=120, metavar='N',
                     help='number of epochs to train (default: 160)')
+=======
+parser.add_argument('--batch-size', type=int, default=32, metavar='N',
+                    help='input batch size for training (default: 32)')
+parser.add_argument('--test-batch-size', type=int, default=32, metavar='N',
+                    help='input batch size for testing (default: 32)')
+parser.add_argument('--epochs', type=int, default=40, metavar='N',
+                    help='number of epochs to train (default: 40)')
+>>>>>>> be4b0c80e37e83049c2bfff2e404ae4521603449
 parser.add_argument('--start-epoch', default=0, type=int, metavar='N',
                     help='manual epoch number (useful on restarts)')
 parser.add_argument('--lr', type=float, default=0.1, metavar='LR',
@@ -48,7 +57,7 @@ parser.add_argument('--no-cuda', action='store_true', default=False,
                     help='disables CUDA training')
 parser.add_argument('--seed', type=int, default=1, metavar='S',
                     help='random seed (default: 1)')
-parser.add_argument('--log-interval', type=int, default=100, metavar='N',
+parser.add_argument('--log-interval', type=int, default=20, metavar='N',
                     help='how many batches to wait before logging training status')
 parser.add_argument('--save', default='/content/Drive/My Drive/Colab Notebooks/models/Transfer', type=str, metavar='PATH',
                     help='path to save prune model (default: current directory)')
@@ -62,7 +71,7 @@ parser.add_argument('--method', default=0, type=int,
 
 args = parser.parse_args()
 args.cuda = not args.no_cuda and torch.cuda.is_available()
-methodType = {0: "finetune", 1: "scratchB", 2: "scratchE"}
+methodType = {0: "finetune", 1: "scratchB", 2: "scratchE", 3: "baseline"}
 modelFolder = methodType[args.method]
 
 torch.manual_seed(args.seed)
@@ -93,8 +102,9 @@ for param in model.feature.parameters():
 num_features = model.classifier[-1].in_features
 print ('[INFO] In Features', num_features)
 features = list(model.classifier.children())[:-1] # Remove last layer
-features.extend([nn.Linear(num_features, 4)]) # Add our layer with 4 outputs
+features.extend([nn.Linear(num_features, 120)]) # Add our layer with 120 outputs
 model.classifier = nn.Sequential(*features) # Replace the model classifier
+
 model.cuda()
 
 optimizer = optim.SGD(model.classifier.parameters(), lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay)
@@ -175,5 +185,10 @@ for epoch in range(args.start_epoch, args.epochs):
         'optimizer': optimizer.state_dict(),
         'cfg': model.cfg
     }, is_best, filepath=args.save)
+<<<<<<< HEAD
 with open(os.path.join(args.save, f'{modelFolder}{args.dist}.txt'), 'w') as file:
     file.write(f'Accu: {best_prec1}, F1: {F1}\n')
+=======
+with open(os.path.join(args.save, f'bestAccu{args.dist}.txt'), 'w') as file:
+    file.write(f'Accu: {best_prec1}, F1: {F1}\n')
+>>>>>>> be4b0c80e37e83049c2bfff2e404ae4521603449
