@@ -28,12 +28,12 @@ parser.add_argument('--dataset', type=str, default='cifar10',
                     help='training dataset (default: cifar100)')
 parser.add_argument('--scratch', default='', type=str, metavar='PATH',
                     help='path to the pruned model')
-parser.add_argument('--batch-size', type=int, default=64, metavar='N',
-                    help='input batch size for training (default: 64)')
-parser.add_argument('--test-batch-size', type=int, default=256, metavar='N',
-                    help='input batch size for testing (default: 256)')
-parser.add_argument('--epochs', type=int, default=120, metavar='N',
-                    help='number of epochs to train (default: 160)')
+parser.add_argument('--batch-size', type=int, default=32, metavar='N',
+                    help='input batch size for training (default: 32)')
+parser.add_argument('--test-batch-size', type=int, default=32, metavar='N',
+                    help='input batch size for testing (default: 32)')
+parser.add_argument('--epochs', type=int, default=40, metavar='N',
+                    help='number of epochs to train (default: 40)')
 parser.add_argument('--start-epoch', default=0, type=int, metavar='N',
                     help='manual epoch number (useful on restarts)')
 parser.add_argument('--lr', type=float, default=0.1, metavar='LR',
@@ -48,7 +48,7 @@ parser.add_argument('--no-cuda', action='store_true', default=False,
                     help='disables CUDA training')
 parser.add_argument('--seed', type=int, default=1, metavar='S',
                     help='random seed (default: 1)')
-parser.add_argument('--log-interval', type=int, default=100, metavar='N',
+parser.add_argument('--log-interval', type=int, default=20, metavar='N',
                     help='how many batches to wait before logging training status')
 parser.add_argument('--save', default='/content/Drive/My Drive/Colab Notebooks/models/Transfer', type=str, metavar='PATH',
                     help='path to save prune model (default: current directory)')
