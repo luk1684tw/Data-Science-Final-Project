@@ -28,6 +28,7 @@ class vgg(nn.Module):
             num_classes = 10
         elif dataset == 'cifar100':
             num_classes = 100
+        
 
         if transfer:
             if method == 3:
