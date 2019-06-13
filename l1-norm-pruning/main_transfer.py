@@ -65,6 +65,8 @@ args = parser.parse_args()
 args.cuda = not args.no_cuda and torch.cuda.is_available()
 methodType = {0: "finetune", 1: "scratchB", 2: "scratchE", 3: "baseline"}
 modelFolder = methodType[args.method]
+print ('[INFO] Method: ', modelFolder)
+print ('[INFO] Dist: ', args.dist)
 
 torch.manual_seed(args.seed)
 if args.cuda:
