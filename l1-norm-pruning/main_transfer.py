@@ -28,7 +28,7 @@ parser.add_argument('--dataset', type=str, default='cifar10',
                     help='training dataset (default: cifar100)')
 parser.add_argument('--scratch', default='', type=str, metavar='PATH',
                     help='path to the pruned model')
-parser.add_argument('--batch-size', type=int, default=32, metavar='N',
+parser.add_argument('--batch-size', type=int, default=16, metavar='N',
                     help='input batch size for training (default: 32)')
 parser.add_argument('--test-batch-size', type=int, default=32, metavar='N',
                     help='input batch size for testing (default: 32)')
