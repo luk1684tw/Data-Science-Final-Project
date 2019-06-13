@@ -126,29 +126,30 @@ def train(epoch):
                 100. * batch_idx / len(train_loader), loss.data.item()))
 
 def test():
-    model.eval()
-    test_loss = 0
-    correct = 0
-    # F1-score 
-    predict = []
-    true_value = []
-    for data, target in test_loader:
-        if args.cuda:
-            data, target = data.cuda(), target.cuda()
-        data, target = Variable(data, volatile=True), Variable(target)
-        output = model(data)
-        test_loss += F.cross_entropy(output, target, size_average=False).item()  # sum up batch loss
-        pred = output.data.max(1, keepdim=True)[1] # get the index of the max log-probability
-        correct += pred.eq(target.data.view_as(pred)).cpu().sum()
-        #F1-score
-        predict += pred.tolist()[0]
-        true_value += target.data.view_as(pred).tolist()[0]
-    test_loss /= len(test_loader.dataset)
-    F1 = f1_score(true_value, predict, average='macro')
-    print('\nTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.2f}%), F1: {:.2f}\n'.format(
-        test_loss, correct, len(test_loader.dataset),
-        100. * correct / len(test_loader.dataset), F1))
-    return correct.data.item() / float(len(test_loader.dataset)), F1
+    with torch.no_grad():
+        model.eval()
+        test_loss = 0
+        correct = 0
+        # F1-score 
+        predict = []
+        true_value = []
+        for data, target in test_loader:
+            if args.cuda:
+                data, target = data.cuda(), target.cuda()
+            data, target = Variable(data), Variable(target)
+            output = model(data)
+            test_loss += F.cross_entropy(output, target, size_average=False).item()  # sum up batch loss
+            pred = output.data.max(1, keepdim=True)[1] # get the index of the max log-probability
+            correct += pred.eq(target.data.view_as(pred)).cpu().sum()
+            #F1-score
+            predict += pred.tolist()[0]
+            true_value += target.data.view_as(pred).tolist()[0]
+        test_loss /= len(test_loader.dataset)
+        F1 = f1_score(true_value, predict, average='macro')
+        print('\nTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.2f}%), F1: {:.2f}\n'.format(
+            test_loss, correct, len(test_loader.dataset),
+            100. * correct / len(test_loader.dataset), F1))
+        return correct.data.item() / float(len(test_loader.dataset)), F1
 
 def save_checkpoint(state, is_best, filepath):
     torch.save(state, os.path.join(filepath, f'{modelFolder}{args.dist}.pth.tar'))
