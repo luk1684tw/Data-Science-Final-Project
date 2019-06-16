@@ -85,6 +85,7 @@ if args.scratch:
     checkpoint = torch.load(modelPath)
     model = models.__dict__[args.arch](dataset=args.dataset, depth=args.depth, cfg=checkpoint['cfg'], transfer=True, method=args.method)
 
+
 print('Old model features: ', model.classifier[-1].out_features) 
 # Freeze training for all layers
 for param in model.feature.parameters():
@@ -102,6 +103,20 @@ model.cuda()
 
 optimizer = optim.SGD(model.classifier.parameters(), lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay)
 print('Get the new trasfer learning model', model) 
+if args.resume:
+    modelPath = os.path.join(modelRoot, 'Transfer', args.resume)
+    if os.path.isfile(args.resume):
+        print("=> loading checkpoint '{}'".format(modelPath))
+        checkpoint = torch.load(modelPath)
+        args.start_epoch = checkpoint['epoch']
+        best_prec1 = checkpoint['best_prec1']
+        model.load_state_dict(checkpoint['state_dict'])
+        optimizer.load_state_dict(checkpoint['optimizer'])
+        print("=> loaded checkpoint '{}' (epoch {}) Prec1: {:f}"
+              .format(modelPath, checkpoint['epoch'], best_prec1))
+    else:
+        print("=> no checkpoint found at '{}'".format(modelPath))
+
 
 
 def train(epoch):
