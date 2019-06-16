@@ -50,7 +50,7 @@ parser.add_argument('--seed', type=int, default=1, metavar='S',
                     help='random seed (default: 1)')
 parser.add_argument('--log-interval', type=int, default=20, metavar='N',
                     help='how many batches to wait before logging training status')
-parser.add_argument('--save', default='/content/Drive/My Drive/Colab Notebooks/models/transfer', type=str, metavar='PATH',
+parser.add_argument('--save', default='/content/Drive/My Drive/Colab Notebooks/models/Transfer', type=str, metavar='PATH',
                     help='path to save prune model (default: current directory)')
 parser.add_argument('--arch', default='vgg', type=str, 
                     help='architecture to use')
@@ -103,19 +103,19 @@ model.cuda()
 
 optimizer = optim.SGD(model.classifier.parameters(), lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay)
 print('Get the new transfer learning model', model) 
-if args.resume:
-    modelPath = os.path.join(modelRoot, 'transfer', args.resume)
-    if os.path.isfile(args.resume):
-        print("=> loading checkpoint '{}'".format(modelPath))
-        checkpoint = torch.load(modelPath)
-        args.start_epoch = checkpoint['epoch']
-        best_prec1 = checkpoint['best_prec1']
-        model.load_state_dict(checkpoint['state_dict'])
-        optimizer.load_state_dict(checkpoint['optimizer'])
-        print("=> loaded checkpoint '{}' (epoch {}) Prec1: {:f}"
-              .format(modelPath, checkpoint['epoch'], best_prec1))
-    else:
-        print("=> no checkpoint found at '{}'".format(modelPath))
+# if args.resume:
+#     modelPath = os.path.join(modelRoot, 'transfer', args.resume)
+#     if os.path.isfile(args.resume):
+#         print("=> loading checkpoint '{}'".format(modelPath))
+#         checkpoint = torch.load(modelPath)
+#         args.start_epoch = checkpoint['epoch']
+#         best_prec1 = checkpoint['best_prec1']
+#         model.load_state_dict(checkpoint['state_dict'])
+#         optimizer.load_state_dict(checkpoint['optimizer'])
+#         print("=> loaded checkpoint '{}' (epoch {}) Prec1: {:f}"
+#               .format(modelPath, checkpoint['epoch'], best_prec1))
+#     else:
+#         print("=> no checkpoint found at '{}'".format(modelPath))
 
 
 
