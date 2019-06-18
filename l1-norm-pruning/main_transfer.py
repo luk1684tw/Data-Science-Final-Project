@@ -77,16 +77,24 @@ if not os.path.exists(args.save):
 torch.cuda.empty_cache()
 train_loader, test_loader = get(datasetRoot, args.batch_size, args.test_batch_size)
 
-model = models.__dict__[args.arch](dataset=args.dataset, depth=args.depth)
+model = models.__dict__[args.arch](dataset=args.dataset, depth=args.depth, transfer=True, method=args.method)
 
 if args.scratch:
     modelPath = os.path.join(modelRoot, modelFolder, args.scratch)
     print ('[INFO] Loading model from', modelPath)
     checkpoint = torch.load(modelPath)
-    model = models.__dict__[args.arch](dataset=args.dataset, depth=args.depth, cfg=checkpoint['cfg'], transfer=True, method=args.method)
-    model.load_state_dict(checkpoint['state_dict'])
-
-print('Old model features: ', model.classifier[-1].out_features) 
+    oldmodel = models.__dict__[args.arch](dataset=args.dataset, depth=args.depth, cfg=checkpoint['cfg'])
+    oldmodel.load_state_dict(checkpoint['state_dict'])
+    print('Old model features: ', model.classifier[-1].out_features) 
+    for [m1, m2] in zip(model.modules(), oldmodel.modules()):
+        if isinstance(m1, nn.Conv2d):
+            m1.weight.data = m2.weight.data.clone()
+            m1.bias.data = m2.bias.data.clone()
+        elif isinstance(m1, nn.BatchNorm2d):
+            m1.weight.data = m2.weight.data.clone()
+            m1.bias.data = m2.bias.data.clone()
+            m1.running_mean = m2.running_mean.clone()
+            m1.running_var = m2.running_var.clone()
 # Freeze training for all layers
 for param in model.feature.parameters():
     param.require_grad = False
