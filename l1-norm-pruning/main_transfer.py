@@ -89,7 +89,6 @@ if args.scratch:
     for [m1, m2] in zip(model.modules(), oldmodel.modules()):
         if isinstance(m1, nn.Conv2d):
             m1.weight.data = m2.weight.data.clone()
-            m1.bias.data = m2.bias.data.clone()
         elif isinstance(m1, nn.BatchNorm2d):
             m1.weight.data = m2.weight.data.clone()
             m1.bias.data = m2.bias.data.clone()
