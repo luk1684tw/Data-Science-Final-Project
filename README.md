@@ -31,9 +31,7 @@ This directory contains all the CIFAR experiments in the paper, where there are 
 3. [Soft filter pruning](https://www.ijcai.org/proceedings/2018/0309.pdf)
 4. [Non-structured weight-level pruning](https://arxiv.org/abs/1506.02626)
 
-For each method, Example commands for baseline training, finetuning, scratch-E training and scratch-B training is in the corresponding directorys.  
+For each method, check out example commands for baseline training, finetuning, scratch-E training and scratch-B training  in the corresponding directorys.  
 
 We only use [L1-norm based channel pruning](https://arxiv.org/abs/1608.08710) as the pruning method. Then we compare the 4 methods' accuracy to find out the result.
-
-# Implementation
 
